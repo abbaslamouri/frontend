@@ -4,6 +4,10 @@
   object-fit: contain;
 }
 
+.fit {
+  object-fit: fill;
+}
+
 .cover {
   object-fit: cover;
 }

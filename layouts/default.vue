@@ -23,7 +23,7 @@ const { showCartSlideout } = useAppState()
         <MainNav />
       </nav>
     </header>
-    <main class="border-red">
+    <main>
       <slot />
     </main>
     <footer class="flex-row items-center justify-center p-2 bg-slate-900 text-slate-50"><Footer /></footer>

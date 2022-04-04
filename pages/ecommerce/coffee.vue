@@ -1,25 +1,27 @@
 <script setup>
-const { state, fetchAll } = useProduct()
+// const { fetchAll } = useProduct()
+const { $fetchAll } = useNuxtApp()
+const products = ref([])
+const totalCount = ref(null) // Total item count in the database
+
 const route = useRoute()
 const page = ref(1)
 const perPage = ref(10)
 const selectedCategories = ref('')
 const timer = ref(null)
-const slides = ref([
-  'assets/vday-d-3.webp',
-  'assets/dott-baristatray-choco.webp',
-  // 'http://picsum.photos/id/1032/900/400',
-  // 'http://picsum.photos/id/1033/900/400',
-  // 'http://picsum.photos/id/1035/900/400',
-  // 'http://picsum.photos/id/1036/900/400',
-  // 'http://picsum.photos/id/1037/900/400',
-])
+const slides = ref(['/assets/vday-d-3.webp', '/assets/dott-baristatray-choco.webp'])
 const heroBgImage = computed(() =>
-  route.name === 'ecommerce-products' ? 'assets/hero-original.webp' : 'assets/hero-virtuo.webp'
+  route.name === 'ecommerce-coffee' ? '/assets/hero-original.webp' : '/assets/hero-virtuo.webp'
 )
 
-const response = await fetchAll()
+const response = await $fetchAll('products')
 console.log(response)
+products.value = response.docs
+totalCount.value = response.totalCount
+console.log(route.name)
+
+// const response = await fetchAll()
+// console.log(response)
 // const pages = computed(() =>
 // 	state.totalItemCount % perPage.value
 // 		? parseInt(state.totalItemCount / perPage.value) + 1
@@ -77,61 +79,27 @@ const handleSearch = async () => {
 <template>
   <div class="oroginal-coffee-pods">
     <section class="offers-carousel">
-      <!-- <Carousel :slides="slides" indicators controls interval="5" height="10" /> -->
+      <Carousel :slides="slides" indicators controls interval="5" height="10" />
     </section>
-
-    <section class="hero" :style="{ backgroundImage: `url(${heroBgImage})` }">
-      <div class="links">
-        <NuxtLink class="link" :to="{ name: 'ecommerce-products', params: { slug: ' ' } }">
-          <button class="btn">
-            <IconsOriginalActive />
-            <span>Original</span>
-          </button>
-        </NuxtLink>
-        <NuxtLink class="link" :to="{ name: 'virtuo-coffee-pods', params: { slug: ' ' } }">
-          <button class="btn">
-            <IconsVirtuoActive />
-            <span>Virtuo</span>
-          </button>
-        </NuxtLink>
-      </div>
-      <div class="content">
-        <div>Original</div>
-        <h1>The Classic Espresso Experience</h1>
-        <NuxtLink class="link" :to="{ name: 'ecommerce-products', params: { slug: ' ' } }">
-          <button class="btn btn-primary">
-            <span>Learn more about the original system</span>
-          </button>
-        </NuxtLink>
-      </div>
-    </section>
-    <div v-if="state.items.length" class="main">
-      <header>
-        <h3 class="title">Products</h3>
-        <NuxtLink class="link" :to="{ name: 'admin-products-slug', params: { slug: ' ' } }">
-          <button class="btn btn-primary">
-            <IconsPlus />
-            <span>Add</span>
-          </button>
-        </NuxtLink>
-      </header>
-      <div class="content shadow-md">
-        <Search v-model="state.query.keyword" @handleSubmit="handleSearch" /> <ProductsAdminProductList />
-        <!-- <Pagination :page="page" :pages="pages" @pageSet="setPage" v-if="pages > 1" /> -->
-      </div>
-    </div>
-    <div v-else class="no-products shadow-md">
+    <EcommerceProductsHero />
+    <EcommerceProductsFiltersAndViews />
+    <!-- <div v-if="products.length" class="main"> -->
+    <!-- <div class="content shadow-md"> -->
+    <EcommerceProductsList :products="products" />
+    <!-- </div> -->
+    <!-- </div> -->
+    <!-- <div v-else class="no-products shadow-md">
       <div class="inner">
         <h3 class="">Add your first physical or digital product</h3>
         <div class="">Add your roduct and variants. Products must have at least a name and a price</div>
-        <NuxtLink class="link" :to="{ name: 'admin-products-slug', params: { slug: ' ' } }">
+        <NuxtLink class="link" :to="{ name: 'index', params: { slug: ' ' } }">
           <button class="btn btn-primary">
             <IconsPlus />
             <span>Add</span>
           </button>
         </NuxtLink>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

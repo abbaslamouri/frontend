@@ -121,11 +121,23 @@
     // padding: 1.5rem;
   }
 
+  &__cta {
+    border-radius: 3px;
+    padding: 1rem 3rem;
+    background-color: white;
+    font-size: 1.4rem;
+    letter-spacing: 0.2rem;
+    font-weight: 100;
+    color: $yellow-700;
+  }
+
   &__hero {
     background-color: $slate-50;
     border-radius: 5px;
+    color: $yellow-700;
+    padding: .5rem 1rem;
     // padding: 1rem 3rem;
-    // font-size: 1.2rem;
+    font-size: 1.2rem;
     letter-spacing: 0.2rem;
     span {
       opacity: 0.5;

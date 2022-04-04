@@ -9,13 +9,13 @@ const { user } = useAuth()
 <template>
   <div class="home">
     <EcommerceWelcomeOfferBand />
-    <!-- <EcommerceHeroBanner /> -->
-    <!-- <EcommercePromoBar /> -->
-    <!-- <EcommerceProductPathway /> -->
-    <!-- <EcommerceGuidedSelling /> -->
-    <!-- <div style="height: 300px; background-color: black">
+    <EcommerceHeroBanner />
+    <EcommercePromoBar />
+    <EcommerceProductPathway />
+    <EcommerceGuidedSelling />
+    <div style="height: 300px; background-color: black">
       <img src="assets/venezia-title.svg" alt="" />
-    </div> -->
+    </div>
   </div>
 </template>
 

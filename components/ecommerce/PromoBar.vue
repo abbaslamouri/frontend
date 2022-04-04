@@ -2,34 +2,34 @@
 const showModal = ref(false)
 </script>
 
-<script>
-export default {}
-</script>
+<script></script>
 
 <template>
-  <section class="promo-bar">
-    <div class="wrapper">
-      <div class="promo">
-        <div class="content">
-          <h3>FREE BARISTA TRAY & CHOCOLATES</h3>
-          <h4>WITH COFFEE PURCHASE</h4>
-          <p>VERTUO: <span class="emphasis">BARISTA2022</span> | ORIGINAL: <span class="emphasis">BARISTA22</span></p>
-          <button class="btn" @click="showModal = true">Lear More</button>
-        </div>
+  <section class="promo-bar bg-slate-500 flex-row justify-center">
+    <div class="wrapper flex-row w-996p text-slate-50">
+      <div
+        class="flex-1 flex-col items-center justify-center gap-2 border border border-r-slate-200 p-4 text-sm tracking-wide"
+      >
+        <!-- <div class="content"> -->
+        <h3 class="font-semi-bold">FREE BARISTA TRAY & CHOCOLATES</h3>
+        <h4>WITH COFFEE PURCHASE</h4>
+        <p>VERTUO: <span class="emphasis">BARISTA2022</span> | ORIGINAL: <span class="emphasis">BARISTA22</span></p>
+        <button class="btn btn__hero" @click="showModal = true">Learn More</button>
+        <!-- </div> -->
       </div>
-      <div class="promo">
-        <div class="content">
-          <h3>SAVE $22 <span>WITH CARAFE STARTER PACK</span></h3>
-          <p>ncludes 2 free coffee sleeves. Exclusively for Vertuo Next machines.</p>
-          <p>VERTUO: <span class="emphasis">BARISTA2022</span> | ORIGINAL: <span class="emphasis">BARISTA22</span></p>
-          <button class="btn">Lear More</button>
-        </div>
+      <div class="flex-1 flex-col items-center justify-center gap-2 p-4 text-sm tracking-wide">
+        <!-- <div class="content"> -->
+        <h3>SAVE $22 <span>WITH CARAFE STARTER PACK</span></h3>
+        <p class="text-center">includes 2 free coffee sleeves. Exclusively for Vertuo Next machines.</p>
+        <p>VERTUO: <span class="emphasis">BARISTA2022</span> | ORIGINAL: <span class="emphasis">BARISTA22</span></p>
+        <button class="btn btn__hero">Learn More</button>
+        <!-- </div> -->
       </div>
     </div>
     <div class="details" v-show="showModal">
       <Modal @closeModal="showModal = false">
         <template #header>
-          <h3 class="modal-header">COFFEE OFFER ONLY AVAILABLE AT NESPRESSO</h3>
+          <h3 class="">COFFEE OFFER ONLY AVAILABLE AT NESPRESSO</h3>
         </template>
         <template #default>
           <div class="modal-content">
@@ -51,10 +51,6 @@ export default {}
                 BusinessSolutions accounts or at Nespresso retail locations.
               </p>
             </div>
-
-            <!-- <div class="image">
-              <img src="assets/N-Welcome-Kit-ICE-VL-200x167-AW.webp" alt="Nespree0 Welcome Offer" />
-            </div> -->
           </div>
         </template>
 
@@ -70,35 +66,23 @@ export default {}
 @import '@/assets/scss/variables';
 
 .promo-bar {
-  background-color: #d28f75;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   .wrapper {
-    // border: 1px solid red;
-    width: 996px;
-    display: flex;
-    // align-items: center;
-    // justify-content: center;
-    color: white;
-
     .promo {
-      flex: 1;
+      // flex: 1;
 
-      &:first-child {
-        border-right: 1px solid $slate-200;
-      }
+      // &:first-child {
+      //   border-right: 1px solid $slate-200;
+      // }
 
       .content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-        padding: 4rem;
-        font-size: 1.4rem;
-        letter-spacing: 0.15rem;
+        // display: flex;
+        // flex-direction: column;
+        // align-items: center;
+        // justify-content: center;
+        // gap: 1rem;
+        // padding: 4rem;
+        // font-size: 1.4rem;
+        // letter-spacing: 0.15rem;
 
         h3 {
           font-weight: 600;
