@@ -58,7 +58,7 @@ if (process.client) {
       !event.target.closest(`.quantity-selector-${uuid}`) &&
       !event.target.classList.contains(`quantity-selector-input`)
     ) {
-      console.log('PPPPPP', event.target.classList)
+      // console.log('PPPPPP', event.target.classList)
       emit('cancel')
     }
   })
@@ -85,10 +85,10 @@ const handleQuantityBtnClick = (qty) => {
         <IconsPlus v-else class="fill-slate-50" />
       </client-only>
     </button>
-    <div class="selector absolute bg-stone-200 z-9 p1 br3" v-if="showSelectQty" :class="quantitySelectorPosition">
+    <div class="selector absolute bg-stone-200 z-9 p-1 br-3" v-if="showSelectQty" :class="quantitySelectorPosition">
       <ul class="flex-row wrap">
         <li
-          class="quantity flex-row gap1 items-center justify-center text-xs w4 h4 ml-1 cursor-pointer"
+          class="quantity flex-row gap-1 items-center justify-center text-xs w-4 h-4 ml--1 cursor-pointer"
           v-for="n in quantityArr"
           :key="`predefined-quantity-${n}`"
           @click="handleQuantityBtnClick(n)"
@@ -98,7 +98,7 @@ const handleQuantityBtnClick = (qty) => {
       </ul>
       <div class="flex-row">
         <input
-          :class="`px1 text-xs flex-1 quantity-selector-input`"
+          :class="`px-1 text-xs flex-1 quantity-selector-input`"
           type="text"
           v-model="quantity"
           placeholder="Add custom quantity"

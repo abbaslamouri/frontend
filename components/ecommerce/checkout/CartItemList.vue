@@ -19,12 +19,12 @@ const handleOkBtnClicked = (event, index) => {
 <template>
   <div class="cart-item-list">
     <div
-      class="cart-items__item flex-row gap2 items-center justify-between py1 mt-1"
+      class="cart-items-list__item flex-row gap-2 items-center justify-between py-1 mt--1"
       v-for="(item, index) in cart.items"
       :key="`cart-item-${index}`"
     >
-      <div class="flex-row gap2 items-center">
-        <div class="w5 h5">
+      <div class="flex-row gap-2 items-center">
+        <div class="w-5 h-5">
           <img class="w-full contain" :src="item.thumb.path || '/placeholder.png'" />
         </div>
         <div class="flex-col text-sm">

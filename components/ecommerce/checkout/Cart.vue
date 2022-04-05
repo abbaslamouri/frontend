@@ -48,8 +48,8 @@ const handleCheckoutBtnClick = async () => {
           </div>
         </div>
         <div class="p-1 bg-stone-300">
-          <div class="flex-row justify-end px3" v-if="cart.items.length">
-            <button class="btn btn__checkout px3 py1" @click="handleCheckoutBtnClick">Checkout</button>
+          <div class="flex-row justify-end px-3" v-if="cart.items.length">
+            <button class="btn btn__checkout px-3 py-1" @click="handleCheckoutBtnClick">Checkout</button>
           </div>
         </div>
       </div>

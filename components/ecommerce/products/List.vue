@@ -27,7 +27,7 @@ const handleItemQuantitySelected = (event, i) => {
 </script>
 
 <template>
-  <div class="w-996p">
+  <div class="w-996p border-red">
     <!-- {{products}}====== -->
     <div v-if="products.length">
       <div

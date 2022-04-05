@@ -53,15 +53,21 @@ const getcartItemCount = () => {
 
 <template>
   <div
-    class="product-card flex-col items-center justify-between gap-1 py-1 "
+    class="flex-col items-center justify-between gap-1 py-1 mt--1 ml--1 w-25-percent h-300p border border-slate-300"
     :class="{ tile: listType === 'tile', list: listType === 'list' }"
   >
-    <div class="product-details flex-col items-center justify-center gap-2">
-      <div class="thumb-and-description" @mouseenter="hide = false" @mouseleave="hide = true">
-        <div class="thumb" :class="{ hide: !hide }" v-if="product.gallery.length > 1">
-          <img class="w-full hfull contain" :src="product.gallery[0].path" :alt="`${product.gallery[0].name} Image`" />
+    <div class="flex-col items-center justify-center gap-2">
+      <div
+        class="thumb-and-description w-full h-12 cursor-pointer"
+        @mouseenter="hide = false"
+        @mouseleave="hide = true"
+      >
+        <div class="thumb w-full h-12" :class="{ hide: !hide }" v-if="product.gallery.length > 1">
+          <img class="w-full h-full contain" :src="product.gallery[0].path" :alt="`${product.gallery[0].name} Image`" />
         </div>
-        <div class="description flex-row items-center" :class="{ hide: hide }">{{ product.excerpt }}</div>
+        <div class="description flex-row items-center justify-center text-center p-1 text-xs" :class="{ hide: hide }">
+          {{ product.excerpt }}
+        </div>
       </div>
       <NuxtLink class="link" :to="{ name: 'index', params: { productSlug: product.slug } }">
         <div class="font-bold">{{ product.name }}</div>
@@ -72,10 +78,11 @@ const getcartItemCount = () => {
       </div>
     </div>
     <div class="flex-row items-center gap-2">
-      <div class="price">
+      <div v-if="product.salePrice">
         <div class="text-slate-400 line-through" :class="{ strikeout: product.salePrice }">${{ product.price }}</div>
-        <div class="sale-price" v-if="product.salePrice">${{ product.salePrice }}</div>
+        <div>${{ product.salePrice }}</div>
       </div>
+      <div v-else>${{ product.price }}</div>
       <EcommerceCheckoutQuantitySelector
         v-if="product.productType === 'simple'"
         :minVal="0"
@@ -98,41 +105,26 @@ const getcartItemCount = () => {
 <style lang="scss" scoped>
 @import '@/assets/scss/variables';
 
-.product-card {
-  width: 25%;
-  height: 300px;
-  border: 1px solid $slate-300;
+.thumb-and-description {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
 
-  .product-details {
-    .thumb-and-description {
-      display: grid;
-      grid-template-rows: 1fr;
-      grid-template-columns: 1fr;
-      width: 100%;
-      cursor: pointer;
-      text-align: center;
-      align-items: center;
+  .thumb {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
 
-      .thumb {
-        grid-column: 1 / 2;
-        grid-row: 1 / 2;
-        height: 10rem;
+    &.hide {
+      display: none;
+    }
+  }
 
-        &.hide {
-          display: none;
-        }
-      }
+  .description {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
 
-      .description {
-        grid-column: 1 / 2;
-        grid-row: 1 / 2;
-        font-size: 1.4rem;
-        height: 10rem;
-
-        &.hide {
-          display: none;
-        }
-      }
+    &.hide {
+      display: none;
     }
   }
 }

@@ -27,7 +27,9 @@ const { showCartSlideout } = useAppState()
       <slot />
     </main>
     <footer class="flex-row items-center justify-center p-2 bg-slate-900 text-slate-50"><Footer /></footer>
-    <EcommerceCheckoutCart v-if="showCartSlideout" />
+    <transition name="slideout">
+      <EcommerceCheckoutCart v-show="showCartSlideout" />
+    </transition>
   </div>
 </template>
 
