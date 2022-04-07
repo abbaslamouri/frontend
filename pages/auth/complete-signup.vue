@@ -2,7 +2,7 @@
 const router = useRouter()
 const route = useRoute()
 const { user, token, isAuthenticated, finishSignup } = useAuth()
-const { errorMsg, message } = useFactory()
+const { errorMsg, message } = useAppState()
 
 const formUser = reactive({
   email: 'lamouri@genvac.com',
