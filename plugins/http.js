@@ -9,8 +9,9 @@ export default defineNuxtPlugin((nuxtApp) => {
       const { data, pending, error } = await useFetch(`${config.API_URL}/${resource}`, {
         params,
       })
+      console.log(data.value)
       if (error.value) throw error.value
-      if (data.value.status === 'fail') {
+      if (data.value && data.value.status === 'fail') {
         console.log('DATAT', data.value.message)
         if (process.client) errorMsg.value = data.value.message
         return { docs: [], totalCount: 0 }
@@ -22,6 +23,34 @@ export default defineNuxtPlugin((nuxtApp) => {
         errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
         return { docs: [], totalCount: 0 }
       }
+    }
+  }
+
+  const fetchDoc = async (resource, id) => {
+    errorMsg.value = null
+    message.value = null
+    const token =
+      useCookie('auth') && useCookie('auth').value && useCookie('auth').value.token
+        ? useCookie('auth').value.token
+        : null
+    try {
+      const { data, pending, error } = await useFetch(`${config.API_URL}/${resource}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (error.value) throw error.value
+      if (data.value.status === 'fail') {
+        console.log('DATAT', data.value.message)
+        if (process.client) errorMsg.value = data.value.message
+        return {}
+      }
+      console.log('FETCH BY SLUG', data.value)
+      return data.value
+    } catch (err) {
+      if (process.client) {
+        console.log('MYERROR', err)
+        errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+      }
+      return {}
     }
   }
 
@@ -124,6 +153,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       fetchBySlug: (resource, slug) => fetchBySlug(resource, slug),
       saveDoc: (resource, doc, id) => saveDoc(resource, doc, id),
       fetchAll: (resource, params) => fetchAll(resource, params),
+      fetchDoc: (resource, id) => fetchDoc(resource, id),
       deleteDocs: (resource, docs) => deleteDocs(resource, docs),
     },
   }

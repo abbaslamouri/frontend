@@ -1,57 +1,31 @@
 <script setup>
-import { useCart } from '~/store/useCart'
-import { useMessage } from '~/store/useMessage'
-
-const { state, fetchAll } = useProduct()
-const cart = useCart()
-const appMessage = useMessage()
-const freeSamples = ref([])
-
-onMounted(async () => {
-  const response = await fetchAll()
-  if (state.errorMsg) {
-    appMessage.errorMsg = state.errorMsg
-  } else {
-    for (const prop in response.docs) {
-      if (response.docs[prop].categories.map((g) => g.slug).includes('free-samples'))
-        freeSamples.value.push(response.docs[prop])
-    }
-  }
+defineProps({
+  freeSamples: Array,
 })
+const { cart } = useCart()
 </script>
 <template>
-  <div class="w32 bg-slate-50 flex-col gap2 p2">
+  <div class="w-32 bg-slate-50 flex-col gap-2 p-2">
     <div class="text-center font-bold tracking-wide">Add Free Sample Pack and Recycling Bag</div>
-    <div class="free-samples">
-      <div v-for="freeSample in freeSamples" :key="freeSample._id">
-        <div
-          class="row py2 px1 border-bottom-stone-300"
-          v-if="!cart.items.find((item) => item.product == freeSample._id)"
-        >
-          <div class="flex-row items-center justify-between">
-            <div class="w20 h10">
-              <img
-                class="w-full hfull contain"
-                v-if="freeSample.gallery[1]"
-                :src="freeSample.gallery[1].path"
-                :alt="`${freeSample.gallery[1].name} Image`"
-              />
-              <img
-                class="w-full hfull contain"
-                v-else-if="freeSample.gallery[0]"
-                :src="freeSample.gallery[0].path"
-                :alt="`${freeSample.gallery[0].name} Image`"
-              />
-              <img v-else src="placeholder.png" :alt="`Placeholder Image`" />
-            </div>
-            <div class="font-bold text-sm">
-              <p>{{ freeSample.name }}</p>
-            </div>
+    <div v-for="freeSample in freeSamples" :key="freeSample._id">
+      <div class="py-2 px-1 border-b-stone-300">
+        <div class="flex-row items-center justify-between">
+          <div class="w-6 h-6 border-pink">
+            <img
+              class="w-full h-full contain"
+              v-if="freeSample.gallery[0]"
+              :src="freeSample.gallery[0].path"
+              :alt="`${freeSample.gallery[0].name} Image`"
+            />
+            <img v-else src="placeholder.png" :alt="`Placeholder Image`" />
           </div>
-          <div class="flex-row items-center justify-between">
-            <div class="price">$0.00</div>
-            <button class="btn btn__quantity-selector px1" @click="cart.addItem(freeSample, 1)"><IconsPlus /></button>
+          <div class="font-bold text-">
+            {{ freeSample.name }}
           </div>
+        </div>
+        <div class="flex-row items-center justify-between">
+          <div class="price">$0.00</div>
+          <button class="btn btn__quantity-selector px-1" @click="cart.addItem(freeSample, 1)"><IconsPlus /></button>
         </div>
       </div>
     </div>
