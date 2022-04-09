@@ -121,6 +121,15 @@
     // padding: 1.5rem;
   }
 
+  &__link {
+    background-color: transparent;
+    color: $yellow-700;
+    // border: 1px solid $slate-500;
+    &:hover {
+      background-color: $yellow-300;
+    }
+  }
+
   &__cta {
     border-radius: 3px;
     padding: 1rem 3rem;
@@ -135,7 +144,7 @@
     background-color: $slate-50;
     border-radius: 5px;
     color: $yellow-700;
-    padding: .5rem 1rem;
+    padding: 0.5rem 1rem;
     // padding: 1rem 3rem;
     font-size: 1.2rem;
     letter-spacing: 0.2rem;

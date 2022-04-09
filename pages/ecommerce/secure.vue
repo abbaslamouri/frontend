@@ -45,10 +45,15 @@ const signin = async () => {
   <div class="secure w-full flex-1 bg-slate-900 flex-row justify-center">
     <div class="content flex-row items-start gap-2 w-996p">
       <div class="flex-1 bg-slate-50 h-35 mt-6">
-        <h3>I am a Returning Customers</h3>
+        <h3>I am a Returning Customer</h3>
         <form @submit.prevent="handleLogin" class="main p-2 flex-col items-center gap-2">
-          <FormsBaseInput type="email" label="Email" v-model="user.email" :required="true" />
-          <FormsBaseInput type="password" label="Password" v-model="user.password" :required="true" />
+          <div class="w-full">
+            <FormsBaseInput type="email" label="Email" v-model="user.email" :required="true" />
+          </div>
+          <div class="w-full">
+            <FormsBaseInput type="password" label="Password" v-model="user.password" :required="true" />
+          </div>
+
           <button class="btn btn__primary items-self-end px-2 py-1" @click="signin">
             Sign In <IconsChevronRight />
           </button>
@@ -56,7 +61,7 @@ const signin = async () => {
         </form>
       </div>
       <div class="flex-1 bg-slate-50 h-35 mt-6">
-        <h3>I am a New Customers</h3>
+        <h3>I am a New Customer</h3>
         <div class="main p-2 flex-col items-center gap-1">
           <h4 class="text-center">Create a YRL account</h4>
           <p class="text-center">and receive these great benefits</p>
@@ -83,7 +88,7 @@ const signin = async () => {
             </div>
           </div>
           <div class="actions flex-row gap-2">
-            <NuxtLink class="btn btn__checkout text-xs px-2 py-1" :to="{ name: 'index' }">
+            <NuxtLink class="btn btn__checkout text-xs px-2 py-1" :to="{ name: 'auth-signup' }">
               <span>Create an Accoun</span>
             </NuxtLink>
             <NuxtLink class="link" :to="{ name: 'ecommerce-checkout' }">

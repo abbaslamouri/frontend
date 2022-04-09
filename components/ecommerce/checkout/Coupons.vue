@@ -16,7 +16,7 @@ const promoCode = ref(null)
             hint="Please enter a valid coupon code"
           />
         </div>
-        <button class="btn bttn-secondary">Apply Coupon</button>
+        <button class="btn btn__secondary">Apply&nbsp;Coupon</button>
       </form>
     </div>
   </div>

@@ -9,10 +9,10 @@ export default defineNuxtPlugin((nuxtApp) => {
       const { data, pending, error } = await useFetch(`${config.API_URL}/${resource}`, {
         params,
       })
-      console.log(data.value)
+      // console.log(data.value)
       if (error.value) throw error.value
       if (data.value && data.value.status === 'fail') {
-        console.log('DATAT', data.value.message)
+        // console.log('DATAT', data.value.message)
         if (process.client) errorMsg.value = data.value.message
         return { docs: [], totalCount: 0 }
       }
@@ -39,9 +39,9 @@ export default defineNuxtPlugin((nuxtApp) => {
       })
       if (error.value) throw error.value
       if (data.value.status === 'fail') {
-        console.log('DATAT', data.value.message)
+        // console.log('DATAT', data.value.message)
         if (process.client) errorMsg.value = data.value.message
-        return {}
+        return false
       }
       console.log('FETCH BY SLUG', data.value)
       return data.value
@@ -50,7 +50,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         console.log('MYERROR', err)
         errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
       }
-      return {}
+      return false
     }
   }
 
@@ -63,7 +63,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       })
       if (error.value) throw error.value
       if (data.value.status === 'fail') {
-        console.log('DATAT', data.value.message)
+        // console.log('DATAT', data.value.message)
         if (process.client) errorMsg.value = data.value.message
         return {}
       }
@@ -100,7 +100,7 @@ export default defineNuxtPlugin((nuxtApp) => {
           headers: { Authorization: `Bearer ${token}` },
         })
       }
-      console.log(response.data.value)
+      // console.log(response.data.value)
       if (response.error.value) throw response.error.value
       if (response.data.value.status === 'fail') {
         console.log('DATAT', response.data.value.message)
@@ -131,7 +131,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         headers: { Authorization: `Bearer ${token}` },
       })
 
-      console.log('DELETE DOCS', data.value)
+      // console.log('DELETE DOCS', data.value)
       if (error.value) throw error.value
       if (data.value.status === 'fail') {
         console.log('DATAT', data.value.message)

@@ -27,7 +27,7 @@ freeSamples.value = response.docs
             </div>
             <div class="px-3 py-2 items-self-end">
               <NuxtLink class="btn btn__checkout text-xs px-2 py-1" :to="{ name: 'ecommerce-shipping' }">
-                <span> Proceed to checkout</span><IconsChevronRight />
+                <span>Continue</span><IconsChevronRight />
               </NuxtLink>
             </div>
           </div>

@@ -27,7 +27,7 @@ const register = async () => {
 <template>
   <div class="h-100vh flex-1 bg-slate-900 flex-row justify-center items-start pt-10">
     <form class="bg-slate-50 p-4 br-3 flex-col gap-2" @submit.prevent="register">
-      <h2>Complete Registration</h2>
+      <h2>Create an Account</h2>
       <div class="bg-red-100 p-2 br-3 text-xs flex-col gap-2" v-if="errorMsg">
         <p>{{ errorMsg }}</p>
         <NuxtLink class="link items-self-end" :to="{ name: 'auth-forgot-password' }">
@@ -39,7 +39,7 @@ const register = async () => {
       <FormsBaseInput v-model="user.name" label="Name" placeholder="name" />
       <FormsBaseInput type="email" v-model="user.email" label="Email" placeholder="Email" />
       <p class="text-xs">
-        By clicking on “continue” I have read and agree with Nespresso Privacy Notice & Terms of Service.
+        By clicking on “continue” you acknowledge that you have read and agree with YRL Privacy Notice & Terms of Service.
       </p>
       <button class="btn btn__primary py-05 px-1 items-self-end">Continue<IconsChevronRight /></button>
     </form>

@@ -2,7 +2,6 @@ import Email from '~/server/utils/Email'
 import { useBody } from 'h3'
 import errorHandler from '~/server/utils/errorHandler'
 import sgMail from '@sendgrid/mail'
-// import pug from 'pug'
 
 export default async (req, res) => {
   res.statusCode = 200
@@ -12,10 +11,13 @@ export default async (req, res) => {
       const { user, url, action } = await useBody(req)
       console.log('HHHHHH', user, url, action)
       let subject = ''
+      let template_id = ''
 
       switch (action) {
         case 'signup':
           subject = 'Welcome onboard!'
+          template_id = process.env.SIGNUP_TEMPLATE_ID
+
           break
 
         default:
@@ -38,24 +40,21 @@ export default async (req, res) => {
           name: 'Abbas Lamouri',
         },
         subject,
-        template_id: process.env.SIGNUP_TEMPLATE_ID,
+        template_id,
         dynamic_template_data: {
-          name: user.name,
+          user: user.name,
           url,
         },
       }
 
-      const xx = await sgMail.send(msg)
-      console.log(xx)
+      await sgMail.send(msg)
 
-      // await new Email(user, url).sendPasswordReset()
       return {
         user,
         url,
         message: `Email sent to ${user.email}.  Please follow the link in your email to reset your pasword.  Please note that you have 1 hour to reset your password`,
       }
     } catch (error) {
-      // console.log(error)
       const err = errorHandler(error)
       res.statusCode = err.statusCode
       return err.message

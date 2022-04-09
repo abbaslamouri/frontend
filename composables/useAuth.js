@@ -26,7 +26,11 @@ const useAuth = () => {
       }
       const response = await $fetch('/api/v1/email', {
         method: 'POST',
-        body: { user, url: 'http://localhost:3000/auth/complete-signup', action: 'signup' },
+        body: {
+          user,
+          url: `${config.BASE_URL}/auth/complete-signup/?token=${data.value.resetToken}`,
+          action: 'signup',
+        },
       })
       console.log('RES', response)
       return response
@@ -39,20 +43,48 @@ const useAuth = () => {
     }
   }
 
-  // const finishSignup = async (user, token) => {
-  //   try {
-  //     const response = await $fetch('/api/v1/auth/complete-signup', {
-  //       method: 'PATCH',
-  //       params: { token },
-  //       body: { ...user },
-  //     })
-  //     console.log(response)
-  //     return response
-  //   } catch (error) {
-  //     console.log(error.data)
-  //     return { ok: false, errorMsg: error.data }
-  //   }
-  // }
+  const finishSignup = async (user, token) => {
+    errorMsg.value = ''
+    message.value = ''
+    try {
+      const { data, pending, error } = await useFetch(`${config.API_URL}/auth/completeSignup/${token}`, {
+        method: 'PATCH',
+        body: { ...user },
+      })
+      if (error.value) throw error.value
+      if (data.value && data.value.status === 'fail') {
+        if (process.client) errorMsg.value = data.value.message
+        return false
+      }
+      return data.value
+    } catch (err) {
+      console.log('MYERROR', err)
+      errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+      return false
+    }
+  }
+
+  const signin = async (user) => {
+    errorMsg.value = ''
+    message.value = ''
+    try {
+      const { data, pending, error } = await useFetch(`${config.API_URL}/auth/signin`, {
+        method: 'POST',
+        body: user,
+      })
+      if (error.value) throw error.value
+      if (error.value) throw error.value
+      if (data.value && data.value.status === 'fail') {
+        if (process.client) errorMsg.value = data.value.message
+        return false
+      }
+      return data.value
+    } catch (err) {
+      console.log('MYERROR', err)
+      errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+      return false
+    }
+  }
 
   // const login = async (user) => {
   //   console.log('here')
@@ -100,7 +132,7 @@ const useAuth = () => {
   //   }
   // }
 
-  return { user, token, isAuthenticated, isAdmin, signup }
+  return { user, token, isAuthenticated, isAdmin, signup, finishSignup, signin }
 }
 
 export default useAuth

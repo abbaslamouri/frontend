@@ -1,23 +1,27 @@
 <script setup>
 const router = useRouter()
 const route = useRoute()
+const config = useRuntimeConfig()
 const { user, token, isAuthenticated, finishSignup } = useAuth()
 const { errorMsg, message } = useAppState()
-
 const formUser = reactive({
-  email: 'lamouri@genvac.com',
-  password: 'adrar0714',
+  email: '',
+  password: '',
 })
 
 const completeSignup = async () => {
-  errorMsg.value = null
-  message.value = null
-  const response = await finishSignup(formUser, route.query.token)
-  if (response.ok === false) return (errorMsg.value = response.errorMsg)
-  message.value = 'Registration successfull.  You are now logged in.'
-  user.value = response.user
-  token.value = response.token
+  const data = await finishSignup(formUser, route.query.token)
+  console.log(data)
+  if (!data) return (errorMsg.value = 'signin failed, please try again later')
+  const auth = useCookie('auth', {
+    expires: new Date(Date.now() + config.COOKIE_EXPIRES_IN * 24 * 3600 * 1000),
+    path: '/',
+  })
+  auth.value = data.auth
+  user.value = data.user
+  token.value = data.token
   isAuthenticated.value = true
+  message.value = 'Registration successfull.  You are now logged in.'
   router.push({ name: 'index' })
 }
 
@@ -27,16 +31,13 @@ const getNewToken = async () => {
 }
 </script>
 
-height: 100vh; background-color: #111; display: flex; justify-content: center; align-items: flex-start; padding-top:
-5rem;
-
 <template>
-  <main class="h100vh bg-slate-900 flex-row justify-center items-start pt10">
-    <form class="bg-slate-50 p4 br3 flex-col gap2" @submit.prevent="completeSignup">
+  <main class="flex-1 bg-slate-900 flex-row justify-center items-start pt-10">
+    <form class="bg-slate-50 p-4 br-3 flex-col gap-2 min-w-40" @submit.prevent="completeSignup">
       <h2>Complete Registration</h2>
-      <div class="bg-red-100 p2 br3 text-xs flex-col gap2" v-if="errorMsg">
+      <div class="bg-red-100 p-2 br-3 text-xs flex-col gap-2" v-if="errorMsg">
         <p>{{ errorMsg }}</p>
-        <button class="btn btn__primary py05 px2 text-xs" @click.prevent="getNewToken">
+        <button class="btn btn__primary py-05 px-2 text-xs" @click.prevent="getNewToken">
           <p>Click Here to get a new token</p>
         </button>
       </div>
@@ -49,7 +50,7 @@ height: 100vh; background-color: #111; display: flex; justify-content: center; a
         :required="true"
         minlength="8"
       />
-      <button class="btn btn__primary py05 px2 items-self-end">Sign Up<IconsChevronRight /></button>
+      <button class="btn btn__primary py-05 px-2 items-self-end">Sign Up<IconsChevronRight /></button>
     </form>
   </main>
 </template>
