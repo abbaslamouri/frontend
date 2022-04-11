@@ -6,12 +6,13 @@ defineProps({
   },
 })
 
-const emit = defineEmits(['updateDisplayStatus'])
+const emit = defineEmits(['editAddress'])
 </script>
 
 <template>
   <div class="flex-col gap-05">
-    <div>
+    <!-- <div class="flex-row gap-3"> -->
+    <div class="flex-col items-start">
       <div class="flex-row gap-05">
         <div>{{ address.title }}</div>
         <div>{{ address.name }}</div>
@@ -29,9 +30,10 @@ const emit = defineEmits(['updateDisplayStatus'])
       <div v-if="address.country">{{ address.country.countryName }}</div>
     </div>
     <div class="link">Currently set as your default delivery address</div>
-    <button class="btn btn__link px-2 py-05 text-xs" @click.prevent="$emit('updateDisplayStatus', 'editing')">
+    <button class="btn btn__link px-2 py-05 text-xs items-self-start" @click.prevent="$emit('editAddress')">
       Edit Address
     </button>
+    <!-- </div> -->
   </div>
 </template>
 

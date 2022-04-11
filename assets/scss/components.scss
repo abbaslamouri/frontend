@@ -126,7 +126,8 @@
     color: $yellow-700;
     // border: 1px solid $slate-500;
     &:hover {
-      background-color: $yellow-300;
+      // border-bottom: 1px solid $yellow-700;
+      text-decoration: underline;
     }
   }
 
