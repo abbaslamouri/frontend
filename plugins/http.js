@@ -8,6 +8,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     try {
       const { data, pending, error } = await useFetch(`${config.API_URL}/${resource}`, {
         params,
+        headers: useRequestHeaders(['cookie']),
       })
       // console.log(data.value)
       if (error.value) throw error.value
