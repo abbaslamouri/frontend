@@ -35,7 +35,6 @@
 	watch(
 		() => localEmail.value,
 		(newVal) => {
-			console.log(newVal)
 			emit('updateEmail', newVal)
 		}
 	)
