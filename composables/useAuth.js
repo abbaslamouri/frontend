@@ -28,7 +28,7 @@ const useAuth = () => {
         method: 'POST',
         body: {
           user,
-          url: `${config.BASE_URL}/auth/verify/?token=${data.value.resetToken}`,
+          url: `${config.BASE_URL}/auth/completesignup/?token=${data.value.resetToken}`,
           action: 'signup',
         },
       })
@@ -73,6 +73,58 @@ const useAuth = () => {
         body: user,
       })
       if (error.value) throw error.value
+      if (data.value && data.value.status === 'fail') {
+        if (process.client) errorMsg.value = data.value.message
+        return false
+      }
+      return data.value
+    } catch (err) {
+      console.log('MYERROR', err)
+      errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+      return false
+    }
+  }
+
+  const fetchLoggedInUser = async () => {
+    errorMsg.value = null
+    message.value = null
+    const token =
+      useCookie('auth') && useCookie('auth').value && useCookie('auth').value.token
+        ? useCookie('auth').value.token
+        : null
+    try {
+      const { data, pending, error } = await useFetch(`${config.API_URL}/users/fetchLoggedIn`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (error.value) throw error.value
+      if (data.value.status === 'fail') {
+        if (process.client) errorMsg.value = data.value.message
+        return false
+      }
+      console.log('FETCH Loggedin', data.value)
+      return data.value
+    } catch (err) {
+      if (process.client) {
+        console.log('MYERROR', err)
+        errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+      }
+      return false
+    }
+  }
+
+  const updateLoggedInUserData = async (payload) => {
+    errorMsg.value = ''
+    message.value = ''
+    const token =
+      useCookie('auth') && useCookie('auth').value && useCookie('auth').value.token
+        ? useCookie('auth').value.token
+        : null
+    try {
+      const { data, pending, error } = await useFetch(`${config.API_URL}/users/updateLoggedInData`, {
+        method: 'PATCH',
+        body: payload,
+        headers: { Authorization: `Bearer ${token}` },
+      })
       if (error.value) throw error.value
       if (data.value && data.value.status === 'fail') {
         if (process.client) errorMsg.value = data.value.message
@@ -132,7 +184,17 @@ const useAuth = () => {
   //   }
   // }
 
-  return { user, token, isAuthenticated, isAdmin, signup, finishSignup, signin }
+  return {
+    user,
+    token,
+    isAuthenticated,
+    isAdmin,
+    signup,
+    finishSignup,
+    signin,
+    fetchLoggedInUser,
+    updateLoggedInUserData,
+  }
 }
 
 export default useAuth

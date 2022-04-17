@@ -5,11 +5,12 @@ useMeta({
 definePageMeta({
   layout: 'checkout',
 })
-const { cart, storeShippinAddress, storeCustomerEmail } = useCart()
-// const { $fetchAll } = useNuxtApp()
+const { cart, updateShippinAddress, updateCustomerEmail, updateLocalStorage } = useCart()
+
+const { user, isAuthenticated, updateLoggedInUserData } = useAuth()
 const { fetchAll } = useHttp()
-const { errorMsg, message } = useAppState()
-const config = useRuntimeConfig()
+// const { errorMsg, message } = useAppState()
+// const config = useRuntimeConfig()
 
 const router = useRouter()
 
@@ -19,6 +20,8 @@ provide('countries', countries)
 provide('states', states)
 
 onMounted(() => {
+  cart.value = JSON.parse(localStorage.getItem('cart')) || {}
+
   console.log(cart.value)
 
   if (!cart.value.shippingAddress.state)
@@ -51,10 +54,16 @@ onMounted(() => {
     : '44202'
 })
 
-const updateShippinAddress = async () => {
-  storeShippinAddress(cart.value.shippingAddress)
-  storeCustomerEmail(cart.value.email)
+const continueToShipping = async () => {
+  cart.value.customer.shippingAddresses = [cart.value.shippingAddress]
+  updateLocalStorage()
 
+  if (isAuthenticated) {
+    const response = await updateLoggedInUserData({
+      shippingAddresses: [{ ...cart.value.shippingAddress, isDefault: true }],
+    })
+    console.log('RRRRRR', response)
+  }
   router.push({ name: 'ecommerce-shipping' })
 }
 </script>
@@ -65,7 +74,7 @@ const updateShippinAddress = async () => {
       <EcommerceCheckoutSteps :step="2" activeColor="#16a34a" />
     </div>
     <ClientOnly>
-      <div class="w-996p bg-slate-50 p-2 flex-col gap-2" v-if="cart.items">
+      <div class="w-996p bg-slate-50 p-2 flex-col gap-2" v-if="cart.items &cart.items.length">
         <EcommerceCheckoutShippingAddressForm
           :address="cart.shippingAddress"
           :email="cart.email"
@@ -76,7 +85,7 @@ const updateShippinAddress = async () => {
           <NuxtLink class="link btn__link" :to="{ name: 'ecommerce-checkout' }">
             <IconsChevronLeft /><span>Back to Basket</span>
           </NuxtLink>
-          <button class="btn btn__checkout px-2 py-05" @click="updateShippinAddress">
+          <button class="btn btn__checkout px-2 py-05" @click="continueToShipping">
             continue<IconsChevronRight />
           </button>
           <!-- <NuxtLink class="btn btn__checkout px-1 py-05" :to="{ name: 'ecommerce-shipping' }"> -->
@@ -86,7 +95,7 @@ const updateShippinAddress = async () => {
       </div>
       <div v-else class="flex-1 flex-col gap-2 bg-slate-50 mt-10 p-4 br-3">
         <p>You have no items in your bag</p>
-        <NuxtLink class="btn btn__checkout px-2 py-05" :to="{ name: 'ecommerce-products' }">
+        <NuxtLink class="btn btn__checkout px-2 py-05" :to="{ name: 'ecommerce-coffee' }">
           <span>Start Shopping</span>
         </NuxtLink>
       </div>

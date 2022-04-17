@@ -2,8 +2,8 @@
 useMeta({ title: 'Payment | YRL' })
 definePageMeta({ layout: 'checkout' })
 
-const { cart, cartTotal } = useCart()
-const { fetchPublishableKey, fetchClientSecret } = useHttp()
+const { cart, fetchPublishableKey, fetchClientSecret } = useCart()
+// const { fetchPublishableKey, fetchClientSecret } = useHttp()
 
 const stripe = ref(null)
 const paymentElement = ref(null)
@@ -13,22 +13,26 @@ const clientSecret = ref(null)
 const publishableKey = await fetchPublishableKey()
 
 onMounted(async () => {
-  cart.value.total = cartTotal()
+  cart.value = JSON.parse(localStorage.getItem('cart')) || {}
+  console.log(cart.value)
+
+  // cart.value.total = cartTotal()
   stripe.value = Stripe(publishableKey)
   clientSecret.value = await fetchClientSecret(cart.value)
-  const options = {
-    clientSecret: clientSecret.value,
-    appearance: {
-      theme: 'flat',
-      variables: {
-        colorBackground: '#e2e8f0',
-      },
-      labels: 'floating',
-    },
-  }
-  elements.value = stripe.value.elements(options)
-  paymentElement.value = elements.value.create('payment')
-  paymentElement.value.mount('#payment-element')
+  console.log(clientSecret.value)
+  // const options = {
+  //   clientSecret: clientSecret.value,
+  //   appearance: {
+  //     theme: 'flat',
+  //     variables: {
+  //       colorBackground: '#e2e8f0',
+  //     },
+  //     labels: 'floating',
+  //   },
+  // }
+  // elements.value = stripe.value.elements(options)
+  // paymentElement.value = elements.value.create('payment')
+  // paymentElement.value.mount('#payment-element')
 })
 
 const comfirmPayment = async () => {
@@ -53,7 +57,7 @@ const comfirmPayment = async () => {
       <EcommerceCheckoutSteps :step="4" activeColor="#16a34a" />
     </div>
     <ClientOnly>
-      <div class="gap-2 w-996p flex-row justify-center gap-2" v-if="cart.items">
+      <div class="gap-2 w-996p flex-row justify-center gap-2" v-if="cart.items && cart.items.length">
         <div class="main flex-1 bg-slate-50 p-2">
           <form id="payment-form" class="flex-col gap-2">
             <div id="payment-element" class=""></div>

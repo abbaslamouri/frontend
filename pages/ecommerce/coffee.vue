@@ -6,7 +6,7 @@ definePageMeta({
   // layout: 'checkout',
 })
 // const { fetchAll } = useProduct()
-const { $fetchAll } = useNuxtApp()
+const { fetchAll } = useHttp()
 const products = ref([])
 const totalCount = ref(null) // Total item count in the database
 
@@ -20,7 +20,7 @@ const heroBgImage = computed(() =>
   route.name === 'ecommerce-coffee' ? '/assets/hero-original.webp' : '/assets/hero-virtuo.webp'
 )
 
-const response = await $fetchAll('products', { 'price[gt]': '0' })
+const response = await fetchAll('products', { 'price[gt]': '0' })
 // console.log(response)
 products.value = response.docs
 totalCount.value = response.totalCount

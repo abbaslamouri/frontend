@@ -5,15 +5,52 @@ useMeta({
 definePageMeta({
   layout: 'checkout',
 })
-const { cart } = useCart()
-onMounted(async () => {
+
+const router = useRouter()
+
+const { cart, updateShippinAddress, updateCustomerEmail, cartTotal, updateLocalStorage } = useCart()
+const freeSamples = ref([])
+const { isAuthenticated, fetchLoggedInUser } = useAuth()
+// const {  } = useHttp()
+const { fetchAll } = useHttp()
+
+onMounted(() => {
+  cart.value = JSON.parse(localStorage.getItem('cart')) || {}
   console.log(cart.value)
 })
-const freeSamples = ref([])
-// const { $fetchAll } = useNuxtApp()
-const { fetchAll } = useHttp()
+
 const response = await fetchAll('products', { price: '0' })
 freeSamples.value = response.docs
+
+const checkout = async () => {
+  cart.value.total = cartTotal()
+  cart.value.shippingAddress = {}
+  cart.value.customer = {}
+  updateLocalStorage()
+
+  if (isAuthenticated.value) {
+    const data = await fetchLoggedInUser()
+    if (!data) return
+    const user = data.doc
+    console.log(user)
+    cart.value.customer = user
+    cart.value.email = user.email
+    if (!user.shippingAddresses.length) {
+      cart.value.shippingAddress = {}
+      updateLocalStorage()
+      console.log('SA', cart.value)
+      return router.push({ name: 'ecommerce-address' })
+    }
+    const shippingAddress = user.shippingAddresses.find((sa) => sa.isDefault === true)
+    cart.value.shippingAddress = shippingAddress ? shippingAddress : user.shippingAddresses[0]
+    updateLocalStorage()
+    console.log('CCC', cart.value)
+    router.push({ name: 'ecommerce-shipping' })
+  } else {
+    console.log(cart.value)
+    router.push({ name: 'ecommerce-secure' })
+  }
+}
 </script>
 
 <template>
@@ -21,7 +58,7 @@ freeSamples.value = response.docs
     <div class="w-996p">
       <div><EcommerceCheckoutSteps :step="1" /></div>
       <ClientOnly>
-        <div class="flex-row items-start gap-2 w-996p" v-if="cart.items.length">
+        <div class="flex-row items-start gap-2 w-996p" v-if="cart.items && cart.items.length">
           <div class="flex-1 bg-slate-50 flex-col gap-2">
             <EcommerceCheckoutProductList />
             <nuxt-link class="link" :to="{ name: 'index' }">
@@ -33,9 +70,7 @@ freeSamples.value = response.docs
               <EcommerceCheckoutCartTotal :showTaxesAndTotal="true" />
             </div>
             <div class="px-3 py-2 items-self-end">
-              <NuxtLink class="btn btn__checkout text-xs px-2 py-1" :to="{ name: 'ecommerce-address' }">
-                <span>Continue</span><IconsChevronRight />
-              </NuxtLink>
+              <button class="btn btn__checkout px-3 py-1" @click="checkout">Continue</button>
             </div>
           </div>
           <EcommerceCheckoutFreeItems :freeSamples="freeSamples" />

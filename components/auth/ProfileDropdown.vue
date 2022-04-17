@@ -12,7 +12,7 @@ const signout = async () => {
   user.value = ''
   token.value = ''
   isAuthenticated.value = false
-  if (process.client) localStorage.removeItem('cart')
+  // if (process.client) localStorage.removeItem('cart')
   message.value = 'You are logged out'
 }
 </script>

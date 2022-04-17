@@ -1,6 +1,4 @@
 <script setup>
-// import { useCart } from '~/store/useCart'
-
 const props = defineProps({
   product: {
     type: Object,
@@ -21,16 +19,21 @@ const emit = defineEmits([
   'resetSelectQuantities',
 ])
 
-// const { products, variants } = useStore()
-// const { fetchAll } = useStore()
-// const cart = useCart()
 const { cart } = useCart()
 const hide = ref(true)
 // const variants = ref([])
 
+onMounted(() => {
+  cart.value = JSON.parse(localStorage.getItem('cart')) || {}
+  console.log(cart.value)
+})
+
 const getcartItemCount = () => {
-  const found = cart.value.items.find((i) => i.product == props.product._id)
-  return found ? found.quantity : 0
+  if (cart.value.items && cart.value.items.length) {
+    const found = cart.value.items.find((i) => i.product == props.product._id)
+    return found ? found.quantity : 0
+  }
+  return 0
 }
 
 // variants.value = props.product._id

@@ -7,9 +7,14 @@ const { errorMsg, message } = useAppState()
 const formUser = reactive({
   email: '',
   password: '',
+  passwordConfirm: 'adrar0714',
 })
 
 const completeSignup = async () => {
+  errorMsg.value = null
+  message.value = null
+  if (formUser.password !== formUser.passwordConfirm)
+    return (errorMsg.value = "Your password and confirmation password don't match")
   const data = await finishSignup(formUser, route.query.token)
   console.log(data)
   if (!data) return (errorMsg.value = 'signin failed, please try again later')
@@ -21,12 +26,12 @@ const completeSignup = async () => {
   user.value = data.user
   token.value = data.token
   isAuthenticated.value = true
+  router.push({ name: 'ecommerce-coffee' })
   message.value = 'Registration successfull.  You are now logged in.'
-  router.push({ name: 'index' })
 }
 
 const getNewToken = async () => {
-  router.push({ name: 'auth-forgot-password' })
+  router.push({ name: 'auth-forgotpassword' })
   showAuthForm.value = false
 }
 </script>
@@ -34,10 +39,14 @@ const getNewToken = async () => {
 <template>
   <main class="flex-1 bg-slate-900 flex-row justify-center items-start pt-10">
     <form class="bg-slate-50 p-4 br-3 flex-col gap-2 min-w-40" @submit.prevent="completeSignup">
-      <h2>Complete Registration</h2>
+      <h2>Activate your account</h2>
       <div class="bg-red-100 p-2 br-3 text-xs flex-col gap-2" v-if="errorMsg">
         <p>{{ errorMsg }}</p>
-        <button class="btn btn__primary py-05 px-2 text-xs" @click.prevent="getNewToken">
+        <button
+          class="btn btn__primary py-05 px-2 text-xs"
+          @click.prevent="getNewToken"
+          v-if="errorMsg.includes('token')"
+        >
           <p>Click Here to get a new token</p>
         </button>
       </div>
@@ -50,7 +59,15 @@ const getNewToken = async () => {
         :required="true"
         minlength="8"
       />
-      <button class="btn btn__primary py-05 px-2 items-self-end">Sign Up<IconsChevronRight /></button>
+      <FormsBaseInput
+        type="password"
+        label="Confirm Password"
+        placeholder="Confirmation Password"
+        v-model="formUser.passwordConfirm"
+        :required="true"
+        minlength="8"
+      />
+      <button class="btn btn__primary py-05 px-1 items-self-end">Complete Registration<IconsChevronRight /></button>
     </form>
   </main>
 </template>

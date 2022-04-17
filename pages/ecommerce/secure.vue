@@ -14,6 +14,8 @@ definePageMeta({
 // const auth = useAuth()
 const { cart } = useCart()
 onMounted(() => {
+  cart.value = JSON.parse(localStorage.getItem('cart')) || {}
+
   console.log(cart.value)
 })
 // const appMessage = useMessage()
@@ -97,7 +99,7 @@ const signin = async () => {
             <NuxtLink class="btn btn__checkout text-xs px-2 py-1" :to="{ name: 'auth-signup' }">
               <span>Create an Accoun</span>
             </NuxtLink>
-            <NuxtLink class="link" :to="{ name: 'ecommerce-checkout' }">
+            <NuxtLink class="link" :to="{ name: 'ecommerce-address' }">
               <span>Checkout as a guest</span>
               <IconsChevronRight />
             </NuxtLink>

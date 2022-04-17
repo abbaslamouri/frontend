@@ -3,9 +3,7 @@ const { cart, numberOfItems } = useCart()
 const { showCartSlideout } = useAppState()
 
 onMounted(() => {
-  if (process.client && localStorage.getItem('cart')) {
-    cart.value = JSON.parse(localStorage.getItem('cart'))
-  }
+  cart.value = JSON.parse(localStorage.getItem('cart')) || {}
 })
 </script>
 

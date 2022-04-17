@@ -39,6 +39,72 @@ const useHttp = () => {
     }
   }
 
+  // const fetchRestrictedDoc = async (resource) => {
+  //   errorMsg.value = null
+  //   message.value = null
+  //   const token =
+  //     useCookie('auth') && useCookie('auth').value && useCookie('auth').value.token
+  //       ? useCookie('auth').value.token
+  //       : null
+  //   try {
+  //     const { data, pending, error } = await useFetch(`${config.API_URL}/${resource}/`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     })
+  //     if (error.value) throw error.value
+  //     if (data.value.status === 'fail') {
+  //       if (process.client) errorMsg.value = data.value.message
+  //       return false
+  //     }
+  //     // console.log('FETCH Restricted', data.value)
+  //     return data.value
+  //   } catch (err) {
+  //     if (process.client) {
+  //       console.log('MYERROR', err)
+  //       errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+  //     }
+  //     return false
+  //   }
+  // }
+
+  const saveDoc = async (resource, payload, id) => {
+    errorMsg.value = null
+    message.value = null
+    let response = null
+    const token =
+      useCookie('auth') && useCookie('auth').value && useCookie('auth').value.token
+        ? useCookie('auth').value.token
+        : null
+    try {
+      if (doc._id) {
+        response = await useFetch(`${config.API_URL}/${resource}/${id}`, {
+          method: 'PATCH',
+          body: payload,
+          headers: { Authorization: `Bearer ${token}` },
+        })
+      } else {
+        response = await useFetch(`${config.API_URL}/${resource}`, {
+          method: 'POST',
+          body: payload,
+          headers: { Authorization: `Bearer ${token}` },
+        })
+      }
+      // console.log(response.data.value)
+      if (response.error.value) throw response.error.value
+      if (response.data.value.status === 'fail') {
+        console.log('DATAT', response.data.value.message)
+        if (process.client) errorMsg.value = response.data.value.message
+        return false
+      }
+      return response.data.value.doc ? response.data.value.doc : {}
+    } catch (err) {
+      if (process.client) {
+        console.log('MYERROR', err)
+        errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+      }
+      return false
+    }
+  }
+
   // const fetchAll = async (resource, params) => {
   //   errorMsg.value = ""
   //   message.value = ''
@@ -60,50 +126,6 @@ const useHttp = () => {
   //     }
   //   }
   // }
-
-  const fetchPublishableKey = async () => {
-    errorMsg.value = ''
-    message.value = ''
-    try {
-      const { data, pending, error } = await useFetch(`${config.API_URL}/orders/publishableKey`)
-      if (error.value) throw error.value
-      if (data.value && data.value.status === 'fail') {
-        if (process.client) errorMsg.value = data.value.message
-        return false
-      }
-      return data.value.publishableKey
-    } catch (err) {
-      if (process.client) {
-        console.log('MYERROR', err)
-        errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
-      }
-      return false
-    }
-  }
-
-  const fetchClientSecret = async (payload) => {
-    errorMsg.value = ''
-    message.value = ''
-    try {
-      const { data, pending, error } = await useFetch(`${config.API_URL}/orders/secret`, {
-        method: 'POST',
-        body: payload,
-      })
-      if (error.value) throw error.value
-      if (data.value && data.value.status === 'fail') {
-        if (process.client) errorMsg.value = data.value.message
-        return false
-      }
-      console.log('PI', data.value)
-      return data.value.clientSecret
-    } catch (err) {
-      if (process.client) {
-        console.log('MYERROR', err)
-        errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
-      }
-      return false
-    }
-  }
 
   // const finishSignup = async (user, token) => {
   //   try {
@@ -166,7 +188,7 @@ const useHttp = () => {
   //   }
   // }
 
-  return { fetchAll, fetchPublishableKey, fetchClientSecret }
+  return { fetchAll, saveDoc }
 }
 
 export default useHttp

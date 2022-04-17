@@ -1,5 +1,5 @@
 <script setup>
-defineProps({
+const props = defineProps({
   modelValue: {
     type: [String, Number],
     default: '',
@@ -26,6 +26,7 @@ defineEmits(['update:modelValue'])
 const inputRef = ref('')
 const errorMsg = ref('')
 const uuid = useUniqueId().getId()
+const fieldType = ref(props.type)
 
 const handleBlur = (event) => {
   if (event.target.value) event.target.classList.add('dirty')
@@ -44,7 +45,7 @@ export default {
     <div class="currency" v-if="currency">$</div>
     <input
       ref="inputRef"
-      :type="type"
+      :type="fieldType"
       :class="{ 'currency-input': currency, dirty: modelValue }"
       :value="modelValue"
       :id="`base-input-${uuid}`"
@@ -58,6 +59,14 @@ export default {
       :readonly="$attrs.readonly ? true : null"
     />
     <span class="placeholder" @click="inputRef.focus()">{{ label }}</span>
+    <div v-if="type === 'password'">
+      <span class="icon" v-if="fieldType === 'password'" @click="fieldType = 'text'">
+        <IconsVisibilityOff class="w-2 h-2" />
+      </span>
+      <span class="icon" v-else @click="fieldType = 'password'">
+        <IconsVisibilityOn class="w-2 h-2" />
+      </span>
+    </div>
   </div>
 </template>
 
