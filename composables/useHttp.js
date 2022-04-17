@@ -15,13 +15,17 @@ const useHttp = () => {
 
   const fetchAll = async (resource, params) => {
     errorMsg.value = null
-    message.value = 'GGGGGGG'
+    message.value = null
     try {
-      const { data, pending, error } = await useFetch(`${config.API_URL}/${resource}`)
-      console.log(data.value)
+      const { data, pending, error } = await useFetch(`${config.API_URL}/${resource}`, {
+        params,
+        // mode: 'no-cors',
+        // headers: useRequestHeaders(['cookie']),
+      })
+      // console.log(data.value)
       if (error.value) throw error.value
       if (data.value && data.value.status === 'fail') {
-        console.log('DATAT', data.value.message)
+        // console.log('DATAT', data.value.message)
         if (process.client) errorMsg.value = data.value.message
         return { docs: [], totalCount: 0 }
       }
@@ -32,6 +36,72 @@ const useHttp = () => {
         errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
         return { docs: [], totalCount: 0 }
       }
+    }
+  }
+
+  // const fetchAll = async (resource, params) => {
+  //   errorMsg.value = ""
+  //   message.value = ''
+  //   try {
+  //     const { data, pending, error } = await useFetch(`${config.API_URL}/${resource}`)
+  //     console.log(data.value)
+  //     if (error.value) throw error.value
+  //     if (data.value && data.value.status === 'fail') {
+  //       console.log('DATAT', data.value.message)
+  //       if (process.client) errorMsg.value = data.value.message
+  //       return { docs: [], totalCount: 0 }
+  //     }
+  //     return data.value
+  //   } catch (err) {
+  //     if (process.client) {
+  //       console.log('MYERROR', err)
+  //       errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+  //       return { docs: [], totalCount: 0 }
+  //     }
+  //   }
+  // }
+
+  const fetchPublishableKey = async () => {
+    errorMsg.value = ''
+    message.value = ''
+    try {
+      const { data, pending, error } = await useFetch(`${config.API_URL}/orders/publishableKey`)
+      if (error.value) throw error.value
+      if (data.value && data.value.status === 'fail') {
+        if (process.client) errorMsg.value = data.value.message
+        return false
+      }
+      return data.value.publishableKey
+    } catch (err) {
+      if (process.client) {
+        console.log('MYERROR', err)
+        errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+      }
+      return false
+    }
+  }
+
+  const fetchClientSecret = async (payload) => {
+    errorMsg.value = ''
+    message.value = ''
+    try {
+      const { data, pending, error } = await useFetch(`${config.API_URL}/orders/secret`, {
+        method: 'POST',
+        body: payload,
+      })
+      if (error.value) throw error.value
+      if (data.value && data.value.status === 'fail') {
+        if (process.client) errorMsg.value = data.value.message
+        return false
+      }
+      console.log('PI', data.value)
+      return data.value.clientSecret
+    } catch (err) {
+      if (process.client) {
+        console.log('MYERROR', err)
+        errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+      }
+      return false
     }
   }
 
@@ -96,7 +166,7 @@ const useHttp = () => {
   //   }
   // }
 
-  return { fetchAll }
+  return { fetchAll, fetchPublishableKey, fetchClientSecret }
 }
 
 export default useHttp

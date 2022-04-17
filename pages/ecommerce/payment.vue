@@ -1,55 +1,80 @@
 <script setup>
-// import { useCart } from '~/store/useCart'
-// import { useAuth } from '~/store/useAuth'
+useMeta({ title: 'Payment | YRL' })
+definePageMeta({ layout: 'checkout' })
 
-// const router = useRouter()
-// const cart = useCart()
-// const auth = useAuth()
+const { cart, cartTotal } = useCart()
+const { fetchPublishableKey, fetchClientSecret } = useHttp()
 
-const paymentOptions = ref([
-  { value: 'stripe', label: 'Credit Cars (Stripe)' },
-  { value: 'check', label: 'Check' },
-])
+const stripe = ref(null)
+const paymentElement = ref(null)
+const elements = ref(null)
+const clientSecret = ref(null)
 
-// if (auth.authenticated) cart.cart.customer = auth.user
+const publishableKey = await fetchPublishableKey()
 
-const handleSubmit = () => {
-  // cart.updatePaymentMethod()
-  // router.push({ name: 'shop-placeOrder' })
+onMounted(async () => {
+  cart.value.total = cartTotal()
+  stripe.value = Stripe(publishableKey)
+  clientSecret.value = await fetchClientSecret(cart.value)
+  const options = {
+    clientSecret: clientSecret.value,
+    appearance: {
+      theme: 'flat',
+      variables: {
+        colorBackground: '#e2e8f0',
+      },
+      labels: 'floating',
+    },
+  }
+  elements.value = stripe.value.elements(options)
+  paymentElement.value = elements.value.create('payment')
+  paymentElement.value.mount('#payment-element')
+})
+
+const comfirmPayment = async () => {
+  try {
+    const result = await stripe.value.confirmPayment({
+      elements: elements.value,
+      confirmParams: {
+        return_url: 'http://localhost:4000/ecommerce/thankyou',
+      },
+    })
+    console.log(result)
+    if (result.error) console.log(result.error.message)
+  } catch (err) {
+    console.log(err.message)
+  }
 }
 </script>
 
 <template>
-  <div class="payment">
-    <!-- <ProductsCheckoutSteps :step1="true" :step2="true" :step3="true" />
-    <h1>Payment Method</h1>
-    <div class="content flex gap-10">
-      <form class="border" @submit.prevent="handleSubmit">
-        <FormsBaseRadioGroup v-model="cart.cart.paymentMethod" name="payment-methods" :options="paymentOptions" />
-        <button class="btn">Continue</button>
-      </form>
-      <div class="order-summary border flex-1 border-red-300">
-        <div class="item w-full flex justify-around border items-center" v-for="item in cart.items" :key="item.product">
-          <div class="image w-48">
-            <img
-              :src="item.featuredImage ? item.featuredImage.path : '/placeholder.png'"
-              :alt="` ${item.name} Photo`"
-            />
-          </div>
-          <h3 class="name">
-            {{ item.name }}
-          </h3>
-          <h4 class="price">${{ item.price }}</h4>
-          <div class="quantity">
-            <span>{{ item.quantity }}</span>
-          </div>
-          <div class="line-item-total">{{ item.quantity * item.price }}</div>
+  <div class="secure w-full flex-1 bg-slate-900 flex-col items-center gap-1">
+    <div class="content flex-row items-start gap-2 w-996p">
+      <EcommerceCheckoutSteps :step="4" activeColor="#16a34a" />
+    </div>
+    <ClientOnly>
+      <div class="gap-2 w-996p flex-row justify-center gap-2" v-if="cart.items">
+        <div class="main flex-1 bg-slate-50 p-2">
+          <form id="payment-form" class="flex-col gap-2">
+            <div id="payment-element" class=""></div>
+            <button id="submit" class="btn btn__checkout px-2 py-1 items-self-end">
+              <div class="spinner hidden" id="spinner"></div>
+              <span id="button-text">Pay now</span>
+            </button>
+            <div id="payment-message" class="hidden"></div>
+          </form>
         </div>
-        <div>
-          {{ cart.total }}
+        <div class="aside bg-slate-50 w-32">
+          <EcommerceCheckoutShippingCartOverview />
         </div>
       </div>
-    </div> -->
+      <div v-else class="flex-1 flex-col gap-2 bg-slate-50 mt-10 p-4 br-3">
+        <p>You have no items in your bag</p>
+        <NuxtLink class="btn btn__checkout px-2 py-05" :to="{ name: 'ecommerce-products' }">
+          <span>Start Shopping</span>
+        </NuxtLink>
+      </div>
+    </ClientOnly>
   </div>
 </template>
 

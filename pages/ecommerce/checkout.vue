@@ -1,11 +1,18 @@
 <script setup>
+useMeta({
+  title: 'Checkout | YRL',
+})
+definePageMeta({
+  layout: 'checkout',
+})
 const { cart } = useCart()
 onMounted(async () => {
   console.log(cart.value)
 })
 const freeSamples = ref([])
-const { $fetchAll } = useNuxtApp()
-const response = await $fetchAll('products', { price: '0' })
+// const { $fetchAll } = useNuxtApp()
+const { fetchAll } = useHttp()
+const response = await fetchAll('products', { price: '0' })
 freeSamples.value = response.docs
 </script>
 
@@ -26,7 +33,7 @@ freeSamples.value = response.docs
               <EcommerceCheckoutCartTotal :showTaxesAndTotal="true" />
             </div>
             <div class="px-3 py-2 items-self-end">
-              <NuxtLink class="btn btn__checkout text-xs px-2 py-1" :to="{ name: 'ecommerce-shipping' }">
+              <NuxtLink class="btn btn__checkout text-xs px-2 py-1" :to="{ name: 'ecommerce-address' }">
                 <span>Continue</span><IconsChevronRight />
               </NuxtLink>
             </div>

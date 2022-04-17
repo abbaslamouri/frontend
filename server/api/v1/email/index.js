@@ -23,8 +23,8 @@ export default async (req, res) => {
         default:
           break
       }
-
       sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
       const msg = {
         to: {
           email: user.email,
@@ -46,13 +46,15 @@ export default async (req, res) => {
           url,
         },
       }
+      console.log('here')
 
       await sgMail.send(msg)
+      console.log('there')
 
       return {
         user,
         url,
-        message: `Email sent to ${user.email}.  Please follow the link in your email to reset your pasword.  Please note that you have 1 hour to reset your password`,
+        message: `Email sent to ${user.email}.  Please follow the link in your email to complete your registration.  Please note you have 1 hour to verify your email`,
       }
     } catch (error) {
       const err = errorHandler(error)

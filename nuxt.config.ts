@@ -2,6 +2,10 @@ import { defineNuxtConfig } from 'nuxt3'
 
 // https://v3.nuxtjs.org/docs/directory-structure/nuxt.config
 export default defineNuxtConfig({
+  // head: {
+  //   script: [{ hid: 'stripe', src: 'https://js.stripe.com/v3/', defer: true }],
+  // },
+
   css: ['@/assets/scss/main.scss'],
 
   // modules: ['@nuxtjs/axios'],

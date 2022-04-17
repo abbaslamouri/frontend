@@ -6,14 +6,17 @@ useMeta({
 const { signup } = useAuth()
 const { message, errorMsg } = useAppState()
 const user = reactive({
-  name: '',
-  email: '',
-  password: '',
+  name: 'Abbas Lamouri',
+  email: 'abbaslamouri@yrlus.com',
+  password: 'adrar0714',
+  passwordConfirm: 'adrar0714',
 })
 
 const register = async () => {
   errorMsg.value = null
   message.value = null
+  if (user.password !== user.passwordConfirm)
+    return (errorMsg.value = "Your password and confirmation password don't match")
   const response = await signup(user)
   console.log(response)
   if (!response) {
@@ -38,8 +41,16 @@ const register = async () => {
       <p class="text-sm">Please fill the form below. Fields marked with * are required.</p>
       <FormsBaseInput v-model="user.name" label="Name" placeholder="name" />
       <FormsBaseInput type="email" v-model="user.email" label="Email" placeholder="Email" />
+      <FormsBaseInput type="password" v-model="user.password" label="Password" placeholder="Password" />
+      <FormsBaseInput
+        type="password"
+        v-model="user.passwordConfirm"
+        label="Confirm Password"
+        placeholder="Confirm Password"
+      />
       <p class="text-xs">
-        By clicking on “continue” you acknowledge that you have read and agree with YRL Privacy Notice & Terms of Service.
+        By clicking on “continue” you acknowledge that you have read and agree with YRL Privacy Notice & Terms of
+        Service.
       </p>
       <button class="btn btn__primary py-05 px-1 items-self-end">Continue<IconsChevronRight /></button>
     </form>

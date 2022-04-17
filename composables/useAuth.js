@@ -28,7 +28,7 @@ const useAuth = () => {
         method: 'POST',
         body: {
           user,
-          url: `${config.BASE_URL}/auth/complete-signup/?token=${data.value.resetToken}`,
+          url: `${config.BASE_URL}/auth/verify/?token=${data.value.resetToken}`,
           action: 'signup',
         },
       })

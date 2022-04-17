@@ -1,4 +1,10 @@
 <script setup>
+useMeta({
+  title: 'Place Order | YRL',
+})
+definePageMeta({
+  layout: 'checkout',
+})
 	const { cart } = useCart()
 
 	// const itemsTotal = Math.round((cart.subTotal + Number.EPSILON) * 100) / 100

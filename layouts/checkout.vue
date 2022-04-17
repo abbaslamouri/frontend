@@ -1,10 +1,9 @@
 <script setup>
-import { useAuth } from '~/store/useAuth'
-import { useCart } from '~/store/useCart'
+useMeta({ script: [{ src: 'https://js.stripe.com/v3/' }] })
 
 const route = useRoute()
-const auth = useAuth()
-const cart = useCart()
+// const auth = useAuth()
+// const cart = useCart()
 
 // console.log(route.name)
 
@@ -34,7 +33,7 @@ const cart = useCart()
               <!-- <LoginDropdown v-if="!auth.authenticated" /> -->
               <!-- <ProfileDropdown v-else /> -->
             </div>
-            <EcommerceCheckoutNavCart v-show="route.name != 'checkout' && route.name != 'shipping'" />
+            <!-- <EcommerceCheckoutNavCart v-show="route.name != 'checkout' && route.name != 'shipping'" /> -->
             <!-- <EcommerceCartSlideout /> -->
           </div>
         </div>

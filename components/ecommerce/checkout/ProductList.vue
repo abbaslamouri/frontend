@@ -1,11 +1,4 @@
 <script setup>
-useMeta({
-  title: 'Checkout | YRL',
-})
-definePageMeta({
-  layout: 'checkout',
-})
-
 const route = useRoute()
 const { cart, updateItemQuantity } = useCart()
 

@@ -1,4 +1,10 @@
 <script setup>
+useMeta({
+  title: 'Home | YRL',
+})
+definePageMeta({
+  // layout: 'checkout',
+})
 // const perfectNesChoices = ref(['', '', ''])
 // const showCoffeeOptions = ref(false)
 // const showRoastOptopns = ref(false)
