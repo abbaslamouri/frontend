@@ -7,11 +7,9 @@ definePageMeta({
 })
 
 const router = useRouter()
-
-const { cart, updateShippinAddress, updateCustomerEmail, cartTotal, updateLocalStorage } = useCart()
+const { cart, cartTotal, updateLocalStorage } = useCart()
 const freeSamples = ref([])
 const { isAuthenticated, fetchLoggedInUser } = useAuth()
-// const {  } = useHttp()
 const { fetchAll } = useHttp()
 
 onMounted(() => {
@@ -20,12 +18,12 @@ onMounted(() => {
 })
 
 const response = await fetchAll('products', { price: '0' })
-freeSamples.value = response.docs
+if(response) freeSamples.value = response.docs
 
 const checkout = async () => {
-  cart.value.total = cartTotal()
-  cart.value.shippingAddress = {}
-  cart.value.customer = {}
+  // cart.value.total = cartTotal()
+  // cart.value.shippingAddress = {}
+  // cart.value.customer = {}
   updateLocalStorage()
 
   if (isAuthenticated.value) {

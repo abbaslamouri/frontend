@@ -7,7 +7,7 @@ const props = defineProps({
   listType: {
     type: String,
   },
-  showSelectQty: {
+  showQuantitySelector: {
     type: Boolean,
   },
 })
@@ -15,7 +15,7 @@ const props = defineProps({
 const emit = defineEmits([
   'selectQuantityBtnClicked',
   'closeSelectQuantity',
-  'itemQuantitySelected',
+  'toggleQuantitySelectors',
   'resetSelectQuantities',
 ])
 
@@ -25,7 +25,7 @@ const hide = ref(true)
 
 onMounted(() => {
   cart.value = JSON.parse(localStorage.getItem('cart')) || {}
-  console.log(cart.value)
+  // console.log(cart.value)
 })
 
 const getcartItemCount = () => {
@@ -86,14 +86,15 @@ const getcartItemCount = () => {
         <div>${{ product.salePrice }}</div>
       </div>
       <div v-else>${{ product.price }}</div>
-      <EcommerceCheckoutQuantitySelector
+      <EcommerceQuantitySelector
         v-if="product.productType === 'simple'"
+        :product="product"
         :minVal="0"
         :maxVal="140"
         :stepVal="10"
         :btnText="getcartItemCount()"
-        :showSelectQty="showSelectQty"
-        @okBtnClicked="$emit('itemQuantitySelected', $event)"
+        :showQuantitySelector="showQuantitySelector"
+        @toggleQuantitySelectors="$emit('toggleQuantitySelectors', $event)"
         @cancel="$emit('resetSelectQuantities')"
       />
       <div v-if="product.productType === 'variable'">

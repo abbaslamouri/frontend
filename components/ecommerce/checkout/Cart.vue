@@ -1,48 +1,21 @@
 <script setup>
 const router = useRouter()
 const { cart } = useCart()
-// const { user, isAuthenticated } = useAuth()
 const { showCartSlideout } = useAppState()
-// const { fetchRestrictedDoc } = useHttp()
 
 onMounted(() => {
   cart.value = JSON.parse(localStorage.getItem('cart')) || { items: [] }
+  console.log(cart.value)
 })
 
 const checkout = async () => {
   showCartSlideout.value = false
   router.push({ name: 'ecommerce-checkout' })
-
-  // if (isAuthenticated.value) {
-  //   // let currentUser = {}
-  //   const data = await fetchRestrictedDoc('users/fetchLoggedIn', user.value._id)
-  //   console.log(data)
-  //   const shippingAddress = data.doc.shippingAddresses.find((sa) => sa.default === true)
-  //   updateShippinAddress(shippingAddress)
-  //   updateCustomerEmail(data.doc.email)
-  //   console.log(cart.value)
-  //   router.push({ name: 'ecommerce-checkout' })
-  // } else {
-  //   router.push({ name: 'ecommerce-secure' })
-  // }
 }
 
 const startShoppingt = async () => {
   showCartSlideout.value = false
   router.push({ name: 'ecommerce-coffee' })
-
-  // if (isAuthenticated.value) {
-  //   // let currentUser = {}
-  //   const data = await fetchRestrictedDoc('users/fetchLoggedIn', user.value._id)
-  //   console.log(data)
-  //   const shippingAddress = data.doc.shippingAddresses.find((sa) => sa.default === true)
-  //   updateShippinAddress(shippingAddress)
-  //   updateCustomerEmail(data.doc.email)
-  //   console.log(cart.value)
-  //   router.push({ name: 'ecommerce-checkout' })
-  // } else {
-  //   router.push({ name: 'ecommerce-secure' })
-  // }
 }
 </script>
 
@@ -75,10 +48,6 @@ const startShoppingt = async () => {
             <div v-else class="flex-1 flex-col gap-2 bg-slate-50 p-4 br-3">
               <p>You have no items in your bag</p>
               <button class="btn btn__checkout px-3 py-1" @click="startShoppingt">Start Shopping</button>
-
-              <!-- <NuxtLink class="btn btn__checkout px-2 py-05" :to="{ name: 'ecommerce-coffee' }">
-                <span>Start Shopping</span>
-              </NuxtLink> -->
             </div>
           </div>
           <div class="p-1 bg-stone-300">
@@ -92,6 +61,4 @@ const startShoppingt = async () => {
   </div>
 </template>
 
-<style lang="scss" scoped>
-@import '@/assets/scss/variables';
-</style>
+<style lang="scss" scoped></style>

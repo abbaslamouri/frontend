@@ -1,5 +1,9 @@
 <script setup>
 const props = defineProps({
+  product: {
+    type: Object,
+    // required: true
+  },
   minVal: {
     type: Number,
     required: true,
@@ -15,7 +19,7 @@ const props = defineProps({
   btnText: {
     type: [String, Number],
   },
-  showSelectQty: {
+  showQuantitySelector: {
     type: Boolean,
   },
   parentComponent: {
@@ -23,9 +27,9 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['okBtnClicked', 'cancel'])
+const emit = defineEmits(['toggleQuantitySelectors', 'cancel'])
+const { addItem } = useCart()
 const uuid = useUniqueId().getId()
-
 const quantity = ref(null)
 const quantitySelectorPosition = ref(null)
 const quantityArr = ref([])
@@ -58,21 +62,20 @@ if (process.client) {
       !event.target.closest(`.quantity-selector-${uuid}`) &&
       !event.target.classList.contains(`quantity-selector-input`)
     ) {
-      // console.log('PPPPPP', event.target.classList)
       emit('cancel')
     }
   })
 }
 const setQuantitySelectorPosition = (event) => {
   const position = event.target.getBoundingClientRect().y
-  console.log(position)
   if (position < 320) quantitySelectorPosition.value = 'below'
   else quantitySelectorPosition.value = null
-  emit('okBtnClicked', { status: !props.showSelectQty, quantity: null })
+  emit('toggleQuantitySelectors', !props.showQuantitySelector)
 }
 
-const handleQuantityBtnClick = (qty) => {
-  emit('okBtnClicked', { status: false, quantity: qty })
+const setQuantity = (qty) => {
+  emit('toggleQuantitySelectors', false)
+  addItem(props.product, qty)
   quantity.value = null
 }
 </script>
@@ -85,13 +88,17 @@ const handleQuantityBtnClick = (qty) => {
         <IconsPlus v-else class="fill-slate-50" />
       </client-only>
     </button>
-    <div class="selector absolute bg-stone-200 z-9 p-1 br-3" v-if="showSelectQty" :class="quantitySelectorPosition">
+    <div
+      class="selector absolute bg-stone-200 z-9 p-1 br-3"
+      v-if="showQuantitySelector"
+      :class="quantitySelectorPosition"
+    >
       <ul class="flex-row wrap">
         <li
           class="quantity flex-row gap-1 items-center justify-center text-xs w-4 h-4 ml--1 cursor-pointer"
           v-for="n in quantityArr"
           :key="`predefined-quantity-${n}`"
-          @click="handleQuantityBtnClick(n)"
+          @click="setQuantity(n)"
         >
           <span>{{ n }}</span>
         </li>
@@ -102,9 +109,9 @@ const handleQuantityBtnClick = (qty) => {
           type="text"
           v-model="quantity"
           placeholder="Add custom quantity"
-          @change="handleQuantityBtnClick(quantity)"
+          @change="setQuantity(quantity)"
         />
-        <button class="btn btn__quantity-selector" @click="handleQuantityBtnClick(quantity)">OK</button>
+        <button class="btn btn__quantity-selector" @click="setQuantity(quantity)">OK</button>
       </div>
     </div>
   </div>

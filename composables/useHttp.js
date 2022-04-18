@@ -27,14 +27,16 @@ const useHttp = () => {
       if (data.value && data.value.status === 'fail') {
         // console.log('DATAT', data.value.message)
         if (process.client) errorMsg.value = data.value.message
-        return { docs: [], totalCount: 0 }
+        // return { docs: [], totalCount: 0 }
+        return false
       }
       return data.value
     } catch (err) {
       if (process.client) {
         console.log('MYERROR', err)
         errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
-        return { docs: [], totalCount: 0 }
+        // return { docs: [], totalCount: 0 }
+        return false
       }
     }
   }

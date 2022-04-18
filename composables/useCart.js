@@ -12,7 +12,7 @@ const useCart = () => {
   }
 
   const addItem = (item, quantity) => {
-    console.log('CCCCC', cart.value)
+    // console.log('CCCCC', cart.value)
     if (isNaN(quantity) || quantity === null) return
     const cartItem = {
       product: item._id,
@@ -31,15 +31,18 @@ const useCart = () => {
     if (!cart.value.items || !cart.value.items.length) {
       cart.value.items = []
       cart.value.items.push(cartItem)
+      cart.value.shippingAddress = {}
+      cart.value.customer = {}
     } else {
       const index = cart.value.items.findIndex((p) => p.product == item._id)
       if (index !== -1) {
-        cart.value.items[index].quantity = cart.value.items[index].quantity + quantity
+        cart.value.items[index].quantity = quantity
+        // cart.value.items[index].quantity = cart.value.items[index].quantity + quantity
       } else {
         cart.value.items.push(cartItem)
       }
     }
-
+    cart.value.total = cartTotal()
     updateLocalStorage()
   }
 
@@ -54,20 +57,20 @@ const useCart = () => {
     }
   }
 
-  const storeCartCustomer = (customer = {}) => {
-    cart.value.customer = customer
-    updateLocalStorage()
-  }
+  // const storeCartCustomer = (customer = {}) => {
+  //   cart.value.customer = customer
+  //   updateLocalStorage()
+  // }
 
-  const updateCustomerEmail = (email = {}) => {
-    cart.value.email = email
-    updateLocalStorage()
-  }
+  // const updateCustomerEmail = (email = {}) => {
+  //   cart.value.email = email
+  //   updateLocalStorage()
+  // }
 
-  const updateShippinAddress = (address = {}) => {
-    cart.value.shippingAddress = address
-    updateLocalStorage()
-  }
+  // const updateShippinAddress = (address = {}) => {
+  //   cart.value.shippingAddress = address
+  //   updateLocalStorage()
+  // }
 
   const numberOfItems = () => {
     return cart.value.items && cart.value.items.length
@@ -128,9 +131,9 @@ const useCart = () => {
     addItem,
     numberOfItems,
     updateItemQuantity,
-    storeCartCustomer,
-    updateShippinAddress,
-    updateCustomerEmail,
+    // storeCartCustomer,
+    // updateShippinAddress,
+    // updateCustomerEmail,
     cartTotal,
     fetchPublishableKey,
     fetchClientSecret,

@@ -10,18 +10,18 @@ const props = defineProps({
 
 const { addItem } = useCart()
 const listType = ref('tile')
-const showSelectQtys = ref([])
+const quantitySelectors = ref([])
 
 const resetSelectQuantities = () => {
   for (const prop in props.products) {
-    showSelectQtys.value[prop] = false
+    quantitySelectors.value[prop] = false
   }
 }
 
-const handleItemQuantitySelected = (event, i) => {
+const toggleQuantitySelectors = (status, i) => {
   resetSelectQuantities()
-  showSelectQtys.value[i] = event.status
-  addItem(props.products[i], event.quantity)
+  quantitySelectors.value[i] = status
+  // addItem(props.products[i], event.quantity)
   // console.log(cart.value)
 }
 </script>
@@ -49,8 +49,8 @@ const handleItemQuantitySelected = (event, i) => {
           :key="product._id"
           :product="product"
           :listType="listType"
-          :showSelectQty="showSelectQtys[i]"
-          @itemQuantitySelected="handleItemQuantitySelected($event, i)"
+          :showQuantitySelector="quantitySelectors[i]"
+          @toggleQuantitySelectors="toggleQuantitySelectors($event, i)"
           @resetSelectQuantities="resetSelectQuantities"
         />
       </div>

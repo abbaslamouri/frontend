@@ -32,7 +32,7 @@ const handleOkBtnClicked = (event, index) => {
           <div class="text-yellow-700">${{ item.price }}</div>
         </div>
       </div>
-      <EcommerceCheckoutQuantitySelector
+      <EcommerceQuantitySelector
         parentComponent="cart"
         :minVal="0"
         :maxVal="140"
