@@ -16,63 +16,73 @@ const addressToEdit = ref({})
 
 const displayStatus = ref('displaying')
 const editAction = ref('')
-const localAddress = ref('')
+// const localAddress = ref('')
 
 const countries = (await fetchAll('countries', { sort: 'countryName' })).docs
 const states = (await fetchAll('states', { sort: 'name' })).docs
 provide('countries', countries)
 provide('states', states)
 
+const selectedAddress = computed(() => cart.value.customer.shippingAddresses.find((a) => a.selected))
+
 onMounted(async () => {
   cart.value = JSON.parse(localStorage.getItem('cart')) || {}
-  localAddress.value = ref(cloneDeep(cart.value.shippingAddress))
-
+  // localAddress.value = ref(cloneDeep(cart.value.shippingAddress))
   console.log(cart.value)
 })
 
-const setDefauAddress = (payload) => {
-  const { index, value } = payload
-  for (const prop in cart.value.customer.shippingAddresses) {
-    cart.value.customer.shippingAddresses[prop].default = false
+const saveAddress = (address) => {
+  console.log('ADR', address)
+  console.log(address)
+  if ((editAction.value = 'edit')) {
+    for (const prop in cart.value.customer.shippingAddresses) {
+      cart.value.customer.shippingAddresses[prop] = false
+    }
+    const i = cart.value.customer.shippingAddresses.findIndex((a) => a.selected)
+    console.log(i)
+    if (i !== -1) cart.value.customer.shippingAddresses.splice(i, { ...address, selected: true })
   }
-  cart.value.customer.shippingAddresses[index].default = value
+  // const { index, value } = payload
+  // for (const prop in cart.value.customer.shippingAddresses) {
+  //   cart.value.customer.shippingAddresses[prop].default = false
+  // }
+  // cart.value.customer.shippingAddresses[index].default = value
+  addressToEdit.value = {}
+  displayStatus.value = 'displaying'
 }
 
 const addAddress = () => {
-  addressToEdit.value = {}
-  if (!addressToEdit.value.state) addressToEdit.value.state = states.find((s) => s._id == '624ef322b9e91e20c3e32390')
-  if (!addressToEdit.value.country)
-    addressToEdit.value.country = countries.find((c) => c._id == '624ef31fb9e91e20c3e3215e')
-  for (const prop in addressToEdit.value.phones) {
-    if (!addressToEdit.value.phones[prop].phoneCountryCode)
-      addressToEdit.value.phones[prop].phoneCountryCode = countries.find((c) => c._id == '624ef31fb9e91e20c3e3215e')
-  }
-  if (!addressToEdit.value.phones)
-    addressToEdit.value.phones = [
+  addressToEdit.value = {
+    email: 'abbaslamnouri1@yrlus.com',
+    title: 'Mr',
+    name: 'Abbas Lamouri1',
+    company: 'YRL Consulting LLC1',
+    addressLine1: '599 Deep Woods Dr.1',
+    city: 'Aurora1',
+    postalCode: '442021',
+    state: states.find((s) => s._id == '624ef322b9e91e20c3e32390'),
+    country: countries.find((c) => c._id == '624ef31fb9e91e20c3e3215e'),
+    phones: [
       {
-        phoneType: '',
-        phoneNumber: '',
+        phoneType: 'Home',
+        phoneNumber: '21650263781',
         phoneCountryCode: countries.find((c) => c._id == '624ef31fb9e91e20c3e3215e'),
       },
-    ]
-  if (!addressToEdit.value.addressType) addressToEdit.value.addressType = 'Residential'
-  addressToEdit.value.name = addressToEdit.value.name ? addressToEdit.value.name : 'Abbas Lamourix'
-  addressToEdit.value.email = addressToEdit.value.email ? addressToEdit.value.email : 'abbaslamouri@yrlus.comx'
-  addressToEdit.value.addressLine1 = addressToEdit.value.addressLine1
-    ? addressToEdit.value.addressLine1
-    : '599 Deep Woods Dr.x'
-  addressToEdit.value.city = addressToEdit.value.city ? addressToEdit.value.city : 'Aurora'
-  addressToEdit.value.postalCode = addressToEdit.value.postalCode ? addressToEdit.value.postalCode : '44202x'
+    ],
+    deliveryInstructions: 'Some delivery instructions1',
+  }
   displayStatus.value = 'editing'
+  editAction.value = 'add'
 }
 
 const editAddress = () => {
-  addressToEdit.value = cart.value.shippingAddress
+  addressToEdit.value = cloneDeep(selectedAddress.value)
   displayStatus.value = 'editing'
+  editAction.value = 'edit'
 }
 
 const cancelAddressUpdate = () => {
-  cart.value.shippingAddress = localAddress.value
+  addressToEdit.value = {}
   displayStatus.value = 'displaying'
 }
 </script>
@@ -88,7 +98,7 @@ const cancelAddressUpdate = () => {
           <div class="bg-stone-400 p-1 text-slate-50">Shipping Address</div>
           <div class="p-2 flex-col gap-1">
             <div class="text-xs">{{ cart.email }}</div>
-            <EcommerceCheckoutShippingAddress :address="cart.shippingAddress" />
+            <EcommerceCheckoutShippingAddress :address="selectedAddress" />
             <div class="link text-xs" v-if="isAuthenticated">Currently set as your default delivery address</div>
             <button class="btn btn__link px-2 py-05 text-xs items-self-start" @click.prevent="editAddress()">
               Edit Address
@@ -109,16 +119,14 @@ const cancelAddressUpdate = () => {
             <template v-slot:default>
               <EcommerceCheckoutShippingAddressForm
                 :address="addressToEdit"
-                :email="cart.email"
                 :showDefaultToggleField="true"
-                @updateAddress="cart.shippingAddress = $event"
-                @updateEmail="cart.email = $event"
+                @updateAddress="saveAddress"
               />
             </template>
             <template v-slot:footer>
               <section class="flex-row gap-2 justify-end px-3">
                 <button class="btn btn__secondary px-2 py-1" @click="cancelAddressUpdate">Cancel</button>
-                <button class="btn btn__primary px-2 py-1" @click="displayStatus = 'displaying'">Save Address</button>
+                <button class="btn btn__primary px-2 py-1" @click="saveAddress">Save Address</button>
               </section>
             </template>
           </Modal>
@@ -146,7 +154,6 @@ const cancelAddressUpdate = () => {
         </NuxtLink>
       </div>
     </ClientOnly>
-    -->
   </div>
 </template>
 

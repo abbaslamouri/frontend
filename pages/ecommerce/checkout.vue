@@ -18,34 +18,34 @@ onMounted(() => {
 })
 
 const response = await fetchAll('products', { price: '0' })
-if(response) freeSamples.value = response.docs
+if (response) freeSamples.value = response.docs
 
 const checkout = async () => {
-  // cart.value.total = cartTotal()
-  // cart.value.shippingAddress = {}
-  // cart.value.customer = {}
-  updateLocalStorage()
-
   if (isAuthenticated.value) {
     const data = await fetchLoggedInUser()
     if (!data) return
     const user = data.doc
-    console.log(user)
+    console.log('USER', user)
     cart.value.customer = user
-    cart.value.email = user.email
-    if (!user.shippingAddresses.length) {
-      cart.value.shippingAddress = {}
-      updateLocalStorage()
-      console.log('SA', cart.value)
-      return router.push({ name: 'ecommerce-address' })
-    }
-    const shippingAddress = user.shippingAddresses.find((sa) => sa.isDefault === true)
-    cart.value.shippingAddress = shippingAddress ? shippingAddress : user.shippingAddresses[0]
     updateLocalStorage()
-    console.log('CCC', cart.value)
-    router.push({ name: 'ecommerce-shipping' })
+    if (!cart.value.customer.shippingAddresses.length) {
+      console.log('DDD', cart.value)
+
+      router.push({ name: 'ecommerce-address' })
+    } else {
+      const i = cart.value.customer.shippingAddresses.findIndex((a) => a.selected)
+      if (i === -1) {
+        const j = cart.value.customer.shippingAddresses.findIndex((a) => a.isDefault)
+        if (j !== -1) cart.value.customer.shippingAddresses[j].selected = true
+        else cart.value.customer.shippingAddresses[0].selected = true
+        updateLocalStorage()
+      }
+
+      // console.log('CCC', i, j, cart.value)
+      router.push({ name: 'ecommerce-shipping' })
+    }
   } else {
-    console.log(cart.value)
+    // console.log(cart.value)
     router.push({ name: 'ecommerce-secure' })
   }
 }

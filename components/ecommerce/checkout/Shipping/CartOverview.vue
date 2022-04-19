@@ -15,12 +15,12 @@ const { cart, cartTotal } = useCart()
         </tr>
       </thead>
       <tbody>
-        <tr class="row" v-for="(item, index) in cart.items" :key="item.product">
+        <tr class="" v-for="(item, index) in cart.items" :key="item.product._id">
           <td>
-            <h4>{{ item.name }}</h4>
+            <h4>{{ item.product.name }}</h4>
           </td>
           <td>{{ item.quantity }}</td>
-          <td class="text-yellow-700">${{ (item.quantity * item.price).toFixed(2) }}</td>
+          <td class="text-yellow-700">${{ (item.quantity * item.product.price).toFixed(2) }}</td>
         </tr>
       </tbody>
     </table>
@@ -50,8 +50,15 @@ const { cart, cartTotal } = useCart()
 
 <style lang="scss" scoped>
 @import '@/assets/scss/variables';
+
+th {
+  // border: 1px solid red;
+  text-align: left;
+  padding: 1rem;
+}
 td {
   font-size: 1.2rem;
   padding: 1rem;
+  border-bottom: 1px solid $stone-200;
 }
 </style>

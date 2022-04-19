@@ -34,6 +34,7 @@ const quantity = ref(null)
 const quantitySelectorPosition = ref(null)
 const quantityArr = ref([])
 const quantitySelectorOffset = ref(null)
+const cartQuantitySelectorOffset = ref(null)
 
 let i = props.minVal
 while (i <= props.maxVal) {
@@ -42,18 +43,25 @@ while (i <= props.maxVal) {
 }
 if (quantityArr.value.length <= 5) {
   quantitySelectorOffset.value = `-110px`
+  cartQuantitySelectorOffset.value = `-30px`
 } else if (quantityArr.value.length > 5 && quantityArr.value.length <= 10) {
   quantitySelectorOffset.value = `-150px`
+  cartQuantitySelectorOffset.value = `-50px`
 } else if (quantityArr.value.length > 10 && quantityArr.value.length <= 15) {
   quantitySelectorOffset.value = `-190px`
+  cartQuantitySelectorOffset.value = `-70px`
 } else if (quantityArr.value.length > 15 && quantityArr.value.length <= 20) {
   quantitySelectorOffset.value = `-230px`
+  cartQuantitySelectorOffset.value = `-90px`
 } else if (quantityArr.value.length > 20 && quantityArr.value.length <= 25) {
   quantitySelectorOffset.value = `-270px`
+  cartQuantitySelectorOffset.value = `-110px`
 } else if (quantityArr.value.length > 25 && quantityArr.value.length <= 30) {
   quantitySelectorOffset.value = `-310px`
+  cartQuantitySelectorOffset.value = `-130px`
 } else {
   quantitySelectorOffset.value = `-350px`
+  cartQuantitySelectorOffset.value = `-150px`
 }
 
 if (process.client) {
@@ -171,7 +179,7 @@ const setQuantity = (qty) => {
 
   &.cart {
     .selector {
-      top: -70px;
+      top: v-bind(cartQuantitySelectorOffset);
       left: -115px;
 
       &::before {

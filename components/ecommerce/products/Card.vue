@@ -30,7 +30,7 @@ onMounted(() => {
 
 const getcartItemCount = () => {
   if (cart.value.items && cart.value.items.length) {
-    const found = cart.value.items.find((i) => i.product == props.product._id)
+    const found = cart.value.items.find((i) => i.product._id == props.product._id)
     return found ? found.quantity : 0
   }
   return 0

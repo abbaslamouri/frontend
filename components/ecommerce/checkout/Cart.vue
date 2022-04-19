@@ -45,10 +45,7 @@ const startShoppingt = async () => {
               <EcommerceCheckoutCartTotal />
               <p class="text-xs">(Shipping costs, special offers not included)</p>
             </div>
-            <div v-else class="flex-1 flex-col gap-2 bg-slate-50 p-4 br-3">
-              <p>You have no items in your bag</p>
-              <button class="btn btn__checkout px-3 py-1" @click="startShoppingt">Start Shopping</button>
-            </div>
+            <EcommerceCheckoutEmptyCart v-else class="bg-slate-50 p3" />
           </div>
           <div class="p-1 bg-stone-300">
             <div class="flex-row justify-end px-3" v-if="cart.items && cart.items.length">

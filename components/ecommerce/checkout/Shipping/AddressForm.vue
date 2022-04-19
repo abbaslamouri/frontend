@@ -6,9 +6,9 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  email: {
-    type: String,
-  },
+  // email: {
+  //   type: String,
+  // },
   showDefaultToggleField: {
     type: Boolean,
     default: false,
@@ -32,12 +32,12 @@ watch(
   { deep: true }
 )
 
-watch(
-  () => localEmail.value,
-  (newVal) => {
-    emit('updateEmail', newVal)
-  }
-)
+// watch(
+//   () => localEmail.value,
+//   (newVal) => {
+//     emit('updateEmail', newVal)
+//   }
+// )
 </script>
 
 <template>
@@ -45,6 +45,7 @@ watch(
     <div class="flex-col gap-2">
       <p>Mandatory fields are marked with a *</p>
       <section class="flex-col gap-1">
+        {{localAddress}}
         <div>
           <FormsBaseRadioGroup
             label="My delivery address is"
@@ -75,7 +76,7 @@ watch(
           </div>
         </div>
         <div class="flex-1">
-          <FormsBaseInput class="flex-1" label="Email" placeholder="Email" v-model="localEmail" />
+          <FormsBaseInput class="flex-1" label="Email" placeholder="Email" v-model="localAddress.email" />
         </div>
       </section>
       <section class="flex-col gap-1">
@@ -87,7 +88,7 @@ watch(
               :options="[
                 { key: 'Cell', name: 'Cell' },
                 { key: 'Home', name: 'Home' },
-                { key: 'Worrk', name: 'Mr' },
+                { key: 'Work', name: 'Work' },
               ]"
             />
           </div>

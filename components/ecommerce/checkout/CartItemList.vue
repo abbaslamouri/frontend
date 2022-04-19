@@ -1,18 +1,18 @@
 <script setup>
-const { cart, updateItemQuantity } = useCart()
+const { cart } = useCart()
 
-const showSelectQtyKeys = ref([])
+const quantitySelectors = ref([])
 
-const resetSelectQtyKeys = () => {
+const resetQuantitySelectors = () => {
   for (const prop in cart.value.items) {
-    showSelectQtyKeys.value[prop] = false
+    quantitySelectors.value[prop] = false
   }
 }
 
-const handleOkBtnClicked = (event, index) => {
-  resetSelectQtyKeys()
-  showSelectQtyKeys.value[index] = event.status
-  updateItemQuantity(cart.value.items[index], event.quantity)
+const toggleQuantitySelectors = (status, index) => {
+  resetQuantitySelectors()
+  quantitySelectors.value[index] = status
+  // updateItemQuantity(cart.value.items[index], event.quantity)
 }
 </script>
 
@@ -21,27 +21,27 @@ const handleOkBtnClicked = (event, index) => {
     <div
       class="cart-items-list__item flex-row gap-2 items-center justify-between py-1 mt--1"
       v-for="(item, index) in cart.items"
-      :key="`cart-item-${index}`"
+      :key="item.product._id"
     >
       <div class="flex-row gap-2 items-center">
-        <div class="w-5 h-5">
-          <img class="w-full contain" :src="item.thumb.path || '/placeholder.png'" />
+        <div class="w-5 h-5" v-if="item.product && item.product.gallery && item.product.gallery[0]">
+          <img class="w-full contain" :src="item.product.gallery[0].path || '/placeholder.png'" />
         </div>
         <div class="flex-col text-sm">
-          <div class="font-bold">{{ item.name }}</div>
-          <div class="text-yellow-700">${{ item.price }}</div>
+          <div class="font-bold">{{ item.product.name }}</div>
+          <div class="text-yellow-700">${{ item.product.price }}</div>
         </div>
       </div>
       <EcommerceQuantitySelector
         parentComponent="cart"
+        :product="item.product"
         :minVal="0"
         :maxVal="140"
         :stepVal="10"
-        :item="item"
-        :showSelectQty="showSelectQtyKeys[index]"
+        :showQuantitySelector="quantitySelectors[index]"
         :btnText="item.quantity"
-        @okBtnClicked="handleOkBtnClicked($event, index)"
-        @cancel="resetSelectQtyKeys"
+        @toggleQuantitySelectors="toggleQuantitySelectors($event, index)"
+        @cancel="resetQuantitySelectors"
       />
     </div>
   </div>
