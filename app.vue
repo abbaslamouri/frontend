@@ -1,5 +1,19 @@
 <script setup>
 const { message, errorMsg, showCartSlideout, alert, showMediaSelector } = useAppState()
+const { cart, updateLocalStorage } = useCart()
+
+onMounted(() => {
+  // if (process.client) {
+  const storageCart = JSON.parse(localStorage.getItem('cart'))
+  if (!storageCart) {
+    cart.value = { items: [], customer: { shippingAddresses: [{}] } }
+    updateLocalStorage()
+  } else {
+    cart.value = storageCart
+  }
+  console.log(cart.value)
+  // }
+})
 
 const hideSnackbar = () => {
   errorMsg.value = null

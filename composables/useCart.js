@@ -34,7 +34,7 @@ const useCart = () => {
       cart.value.items = []
       cart.value.items.push(cartItem)
       // cart.value.shippingAddress = {}
-      cart.value.customer = {}
+      // cart.value.customer = {}
     } else {
       const index = cart.value.items.findIndex((p) => p.product._id == item._id)
       if (index !== -1) {

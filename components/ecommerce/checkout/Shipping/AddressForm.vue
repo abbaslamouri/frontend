@@ -45,7 +45,6 @@ watch(
     <div class="flex-col gap-2">
       <p>Mandatory fields are marked with a *</p>
       <section class="flex-col gap-1">
-        {{localAddress}}
         <div>
           <FormsBaseRadioGroup
             label="My delivery address is"

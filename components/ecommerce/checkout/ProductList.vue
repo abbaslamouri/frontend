@@ -1,5 +1,4 @@
 <script setup>
-const route = useRoute()
 const { cart } = useCart()
 
 const quantitySelectors = ref([])
@@ -13,22 +12,6 @@ const resetQuantitySelectors = () => {
 const toggleQuantitySelectors = (status, index) => {
   resetQuantitySelectors()
   quantitySelectors.value[index] = status
-  // updateItemQuantity(cart.value.items[index], event.quantity)
-}
-
-// const handleCheckout = async () => {
-//   if (auth.authenticated) {
-//     // console.log(auth.user)
-//     // cart.updateCustomerInfo(auth.user)
-//     await cart.saveCart()
-//     router.push({ name: 'shipping' })
-//   } else {
-//     router.push('/secure?redirect=/shipping')
-//   }
-// }
-
-const removeItem = (item) => {
-  // updateItemQuantity(item, 0)
 }
 </script>
 
@@ -88,6 +71,10 @@ const removeItem = (item) => {
 
 <style lang="scss" scoped>
 @import '@/assets/scss/variables';
+
+th{
+  padding:1rem;
+}
 
 td {
   padding: 2rem;

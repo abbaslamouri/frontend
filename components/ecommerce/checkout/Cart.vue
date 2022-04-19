@@ -2,21 +2,25 @@
 const router = useRouter()
 const { cart } = useCart()
 const { showCartSlideout } = useAppState()
+const { saveDoc } = useHttp()
 
-onMounted(() => {
-  cart.value = JSON.parse(localStorage.getItem('cart')) || { items: [] }
-  console.log(cart.value)
-})
+// onMounted(() => {
+// cart.value = JSON.parse(localStorage.getItem('cart')) || { items: [] }
+// console.log(cart.value)
+// })
 
 const checkout = async () => {
-  showCartSlideout.value = false
-  router.push({ name: 'ecommerce-checkout' })
+  console.log('PPPPPP', cart.value)
+  // showCartSlideout.value = false÷
+  const response = await saveDoc('orders', cart.value)
+  console.log(response)
+  // router.push({ name: 'ecommerce-checkout' })
 }
 
-const startShoppingt = async () => {
-  showCartSlideout.value = false
-  router.push({ name: 'ecommerce-coffee' })
-}
+// const startShoppingt = async () => {
+//   showCartSlideout.value = false
+//   router.push({ name: 'ecommerce-coffee' })
+// }
 </script>
 
 <template>

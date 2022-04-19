@@ -68,7 +68,7 @@ const useHttp = () => {
   //   }
   // }
 
-  const saveDoc = async (resource, payload, id) => {
+  const saveDoc = async (resource, payload) => {
     errorMsg.value = null
     message.value = null
     let response = null
@@ -77,8 +77,8 @@ const useHttp = () => {
         ? useCookie('auth').value.token
         : null
     try {
-      if (doc._id) {
-        response = await useFetch(`${config.API_URL}/${resource}/${id}`, {
+      if (payload._id) {
+        response = await useFetch(`${config.API_URL}/${resource}/${payload.id}`, {
           method: 'PATCH',
           body: payload,
           headers: { Authorization: `Bearer ${token}` },

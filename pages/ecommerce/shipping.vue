@@ -9,14 +9,15 @@ definePageMeta({
 })
 
 const { user, isAuthenticated, updateLoggedInUserData } = useAuth()
-const { cart } = useCart()
+const { cart, updateLocalStorage } = useCart()
 const { fetchAll } = useHttp()
+const { errorMsg } = useAppState()
 const showShippingAddressModal = ref(false)
-const addressToEdit = ref({})
+// const addressToEdit = ref({})
 
 const displayStatus = ref('displaying')
 const editAction = ref('')
-// const localAddress = ref('')
+const localAddress = ref({})
 
 const countries = (await fetchAll('countries', { sort: 'countryName' })).docs
 const states = (await fetchAll('states', { sort: 'name' })).docs
@@ -26,34 +27,50 @@ provide('states', states)
 const selectedAddress = computed(() => cart.value.customer.shippingAddresses.find((a) => a.selected))
 
 onMounted(async () => {
-  cart.value = JSON.parse(localStorage.getItem('cart')) || {}
-  // localAddress.value = ref(cloneDeep(cart.value.shippingAddress))
+  // cart.value = JSON.parse(localStorage.getItem('cart')) || {}
+  // localAddress.value = cloneDeep(selectedAddress.value)
   console.log(cart.value)
 })
 
-const saveAddress = (address) => {
-  console.log('ADR', address)
-  console.log(address)
-  if ((editAction.value = 'edit')) {
-    for (const prop in cart.value.customer.shippingAddresses) {
-      cart.value.customer.shippingAddresses[prop] = false
-    }
+const saveAddress = () => {
+  console.log('ADR', localAddress.value)
+  if (
+    !localAddress.value.email ||
+    !localAddress.value.name ||
+    !localAddress.value.addressLine1 ||
+    !localAddress.value.city ||
+    !localAddress.value.postalCode
+  )
+    return (errorMsg.value = 'Please add required fields')
+  if (editAction.value == 'edit') {
     const i = cart.value.customer.shippingAddresses.findIndex((a) => a.selected)
     console.log(i)
-    if (i !== -1) cart.value.customer.shippingAddresses.splice(i, { ...address, selected: true })
+    if (i !== -1) {
+      cart.value.customer.shippingAddresses.splice(i, 1, { ...cloneDeep(localAddress.value), selected: true })
+      updateLocalStorage()
+      localAddress.value = {}
+      console.log('ZZZZ', cart.value.customer.shippingAddresses)
+    }
+    displayStatus.value = 'displaying'
+  } else if (editAction.value == 'add') {
+    localAddress.value.selected = true
+    for (const prop in cart.value.customer.shippingAddresses) {
+      cart.value.customer.shippingAddresses[prop].selected = false
+    }
+    cart.value.customer.shippingAddresses.push({ ...localAddress.value })
+    updateLocalStorage()
+    displayStatus.value = 'displaying'
   }
   // const { index, value } = payload
   // for (const prop in cart.value.customer.shippingAddresses) {
   //   cart.value.customer.shippingAddresses[prop].default = false
   // }
   // cart.value.customer.shippingAddresses[index].default = value
-  addressToEdit.value = {}
-  displayStatus.value = 'displaying'
 }
 
 const addAddress = () => {
-  addressToEdit.value = {
-    email: 'abbaslamnouri1@yrlus.com',
+  localAddress.value = {
+    email: 'abbaslamnouri1@yrlus.comdddd',
     title: 'Mr',
     name: 'Abbas Lamouri1',
     company: 'YRL Consulting LLC1',
@@ -76,13 +93,22 @@ const addAddress = () => {
 }
 
 const editAddress = () => {
-  addressToEdit.value = cloneDeep(selectedAddress.value)
+  localAddress.value = cloneDeep(selectedAddress.value)
   displayStatus.value = 'editing'
   editAction.value = 'edit'
 }
 
 const cancelAddressUpdate = () => {
-  addressToEdit.value = {}
+  localAddress.value = {}
+  displayStatus.value = 'displaying'
+}
+
+const setSelectedAddress = (index) => {
+  for (const prop in cart.value.customer.shippingAddresses) {
+    cart.value.customer.shippingAddresses[prop].selected = false
+  }
+  cart.value.customer.shippingAddresses[index].selected = true
+  updateLocalStorage()
   displayStatus.value = 'displaying'
 }
 </script>
@@ -96,16 +122,43 @@ const cancelAddressUpdate = () => {
       <div class="gap-2 w-996p flex-row justify-center gap-2" v-if="cart.items && cart.items.length">
         <div class="main flex-1 bg-slate-50">
           <div class="bg-stone-400 p-1 text-slate-50">Shipping Address</div>
-          <div class="p-2 flex-col gap-1">
-            <div class="text-xs">{{ cart.email }}</div>
-            <EcommerceCheckoutShippingAddress :address="selectedAddress" />
+          <div class="p-2 flex-col gap-1" v-if="displayStatus == 'displaying'">
+            <div class="flex-row gap-4 items-center">
+              <EcommerceCheckoutShippingAddress :address="selectedAddress" />
+              <button
+                class="btn btn__secondary px-2 py-05 text-xs"
+                @click.prevent="displayStatus = 'selecting'"
+                v-if="isAuthenticated"
+              >
+                Switch Address
+              </button>
+            </div>
             <div class="link text-xs" v-if="isAuthenticated">Currently set as your default delivery address</div>
-            <button class="btn btn__link px-2 py-05 text-xs items-self-start" @click.prevent="editAddress()">
+            <button
+              class="btn btn__link px-2 py-05 text-xs items-self-start"
+              @click.prevent="editAddress"
+              v-if="isAuthenticated"
+            >
               Edit Address
             </button>
-            <button class="btn btn__secondary px-2 py-1 items-self-end" v-if="isAuthenticated" @click="addAddress()">
+            <button class="btn btn__secondary px-2 py-1 items-self-end" v-if="isAuthenticated" @click="addAddress">
               Add Address
             </button>
+          </div>
+          <div class="p-2 flex-col gap-2" v-if="isAuthenticated && displayStatus == 'selecting'">
+            <div
+              class="flex-row gap-2 items-center justify-between"
+              v-for="(address, index) in cart.customer.shippingAddresses"
+            >
+              <EcommerceCheckoutShippingAddress :class="{ selected: address === selectedAddress }" :address="address" />
+              <button
+                class="btn btn__secondary px-2 py-1 text-xs"
+                v-if="address !== selectedAddress"
+                @click="setSelectedAddress(index)"
+              >
+                Select this Address
+              </button>
+            </div>
           </div>
           <Modal
             :outerBoxWidth="75"
@@ -118,9 +171,9 @@ const cancelAddressUpdate = () => {
             </template>
             <template v-slot:default>
               <EcommerceCheckoutShippingAddressForm
-                :address="addressToEdit"
+                :address="localAddress"
                 :showDefaultToggleField="true"
-                @updateAddress="saveAddress"
+                @updateAddress="localAddress = $event"
               />
             </template>
             <template v-slot:footer>
@@ -157,4 +210,8 @@ const cancelAddressUpdate = () => {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.selected {
+  font-weight: 700;
+}
+</style>

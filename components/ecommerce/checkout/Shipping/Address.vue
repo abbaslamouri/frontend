@@ -11,7 +11,7 @@ defineProps({
   <div class="flex-col gap-05 text-xs">
     <div class="flex-col items-start">
       <div class="flex-row gap-05">
-        <div v-if="address.title">{{ address.title }}.</div>
+        <div v-if="address && address.title">{{ address.title }}.</div>
         <div>{{ address.name }}</div>
       </div>
       <div>{{ address.company }}</div>

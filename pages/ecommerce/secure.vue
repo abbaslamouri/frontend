@@ -12,12 +12,12 @@ definePageMeta({
 // const router = useRouter()
 
 // const auth = useAuth()
-const { cart } = useCart()
-onMounted(() => {
-  cart.value = JSON.parse(localStorage.getItem('cart')) || {}
+// const { cart } = useCart()
+// onMounted(() => {
+// cart.value = JSON.parse(localStorage.getItem('cart')) || {}
 
-  console.log(cart.value)
-})
+// console.log(cart.value)
+// })
 // const appMessage = useMessage()
 
 const user = reactive({

@@ -1,55 +1,55 @@
 <script setup>
+import cloneDeep from 'lodash.clonedeep'
+
 useMeta({
   title: 'Address | YRL',
 })
 definePageMeta({
   layout: 'checkout',
 })
-const { cart, updateShippinAddress, updateCustomerEmail, updateLocalStorage } = useCart()
-
-const { user, isAuthenticated, updateLoggedInUserData } = useAuth()
+const { cart, updateLocalStorage } = useCart()
+const { isAuthenticated, updateLoggedInUserData } = useAuth()
 const { fetchAll } = useHttp()
-// const { errorMsg, message } = useAppState()
-// const config = useRuntimeConfig()
-
 const router = useRouter()
-
+const address = ref({})
 const countries = (await fetchAll('countries', { sort: 'countryName' })).docs
 const states = (await fetchAll('states', { sort: 'name' })).docs
 provide('countries', countries)
 provide('states', states)
 
-const address = reactive({
-  email: 'abbaslamnouri@yrlus.com',
-  title: 'Mr',
-  name: 'Abbas Lamouri',
-  company: 'YRL Consulting LLC',
-  addressLine1: '599 Deep Woods Dr.',
-  city: 'Aurora',
-  postalCode: '44202',
-  state: states.find((s) => s._id == '624ef322b9e91e20c3e32390'),
-  country: countries.find((c) => c._id == '624ef31fb9e91e20c3e3215e'),
-  phones: [
-    {
-      phoneType: 'Cell',
-      phoneNumber: '2165026378',
-      phoneCountryCode: countries.find((c) => c._id == '624ef31fb9e91e20c3e3215e'),
-    },
-  ],
-  deliveryInstructions: 'Some delivery instructions',
-})
-
 onMounted(() => {
-  cart.value = JSON.parse(localStorage.getItem('cart')) || {}
-  console.log(cart.value)
+  if (
+    cart.value.customer.shippingAddresses.length > 0 &&
+    Object.values(cart.value.customer.shippingAddresses[0]).length
+  )
+    address.value = cloneDeep(cart.value.customer.shippingAddresses[0])
+  else
+    address.value = {
+      email: 'abbaslamnouri@yrlus.com',
+      title: 'Mr',
+      name: 'Abbas Lamouri',
+      company: 'YRL Consulting LLC',
+      addressLine1: '599 Deep Woods Dr.',
+      city: 'Aurora',
+      postalCode: '44202',
+      state: states.find((s) => s._id == '624ef322b9e91e20c3e32390'), // set default to OH
+      country: countries.find((c) => c._id == '624ef31fb9e91e20c3e3215e'), // Set default to USA
+      phones: [
+        {
+          phoneType: 'Cell',
+          phoneNumber: '2165026378',
+          phoneCountryCode: countries.find((c) => c._id == '624ef31fb9e91e20c3e3215e'), // Set default to USA
+        },
+      ],
+      deliveryInstructions: 'Some delivery instructions',
+    }
 })
 
 const continueToShipping = async () => {
-  cart.value.customer.shippingAddresses = [{ ...address, selected: true, isDefault: true }]
-  console.log(cart.value)
+  cart.value.customer.shippingAddresses[0] = { ...address.value, selected: true, isDefault: true }
   updateLocalStorage()
 
-  if (isAuthenticated) {
+  if (isAuthenticated.value) {
     const response = await updateLoggedInUserData({
       shippingAddresses: cart.value.customer.shippingAddresses,
     })
@@ -66,7 +66,7 @@ const continueToShipping = async () => {
     </div>
     <ClientOnly>
       <div class="w-996p bg-slate-50 p-2 flex-col gap-2" v-if="cart.items && cart.items.length">
-        <EcommerceCheckoutShippingAddressForm :address="address" @updateAddress="cart.shippingAddress = $event" />
+        <EcommerceCheckoutShippingAddressForm :address="address" @updateAddress="address = $event" />
         <div class="flex-row items-end justify-between gap-2 px-3 py-1 text-sm">
           <NuxtLink class="link btn__link" :to="{ name: 'ecommerce-checkout' }">
             <IconsChevronLeft /><span>Back to Basket</span>
@@ -74,9 +74,6 @@ const continueToShipping = async () => {
           <button class="btn btn__checkout px-2 py-05" @click="continueToShipping">
             continue<IconsChevronRight />
           </button>
-          <!-- <NuxtLink class="btn btn__checkout px-1 py-05" :to="{ name: 'ecommerce-shipping' }"> -->
-          <!-- <span> continue</span><IconsChevronRight /> -->
-          <!-- </NuxtLink> -->
         </div>
       </div>
       <div v-else class="flex-1 flex-col gap-2 bg-slate-50 mt-10 p-4 br-3">

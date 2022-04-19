@@ -3,12 +3,12 @@ const promoCode = ref(null)
 </script>
 
 <template>
-  <div class="promo-code">
-    <div class="header">Promo Code</div>
-    <div class="main">
+  <div class="flex-col gap-1 border-b-stone-300 py-2">
+    <div class="bg-stone-200 p-1">Promo Code</div>
+    <div class="flex-row gap-2 items-center px-2">
       <div class="title">Enter promo code</div>
-      <form>
-        <div class="input">
+      <form class="flex-1 flex-row gap-1 items-center">
+        <div class="w-full">
           <FormsBaseInput
             label="Promo Code"
             placeholder="Promo Code"
@@ -16,53 +16,10 @@ const promoCode = ref(null)
             hint="Please enter a valid coupon code"
           />
         </div>
-        <button class="btn btn__secondary">Apply&nbsp;Coupon</button>
+        <button class="btn btn__secondary px-2 py-1">Apply&nbsp;Coupon</button>
       </form>
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
-@import '@/assets/scss/variables';
-
-.promo-code {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  padding: 2rem 0;
-  font-size: 1.4rem;
-  border-bottom: 1px solid $stone-300;
-
-  .header {
-    background-color: $stone-300;
-    padding: 2rem;
-  }
-
-  .main {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    padding: 2rem;
-
-    form {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 3rem;
-
-      .input {
-        width: 100%;
-      }
-
-      .btn {
-        min-width: 15rem;
-        width: 15rem;
-        align-self: center;
-        border-radius: 3px;
-        padding: 1rem 3rem;
-      }
-    }
-  }
-}
-</style>
+<style lang="scss" scoped></style>

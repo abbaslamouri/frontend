@@ -12,10 +12,10 @@ const freeSamples = ref([])
 const { isAuthenticated, fetchLoggedInUser } = useAuth()
 const { fetchAll } = useHttp()
 
-onMounted(() => {
-  cart.value = JSON.parse(localStorage.getItem('cart')) || {}
-  console.log(cart.value)
-})
+// onMounted(() => {
+// cart.value = JSON.parse(localStorage.getItem('cart')) || {}
+// console.log(cart.value)
+// })
 
 const response = await fetchAll('products', { price: '0' })
 if (response) freeSamples.value = response.docs
@@ -26,11 +26,11 @@ const checkout = async () => {
     if (!data) return
     const user = data.doc
     console.log('USER', user)
+    console.log('CUSTOMER', cart.value.customer)
     cart.value.customer = user
     updateLocalStorage()
     if (!cart.value.customer.shippingAddresses.length) {
       console.log('DDD', cart.value)
-
       router.push({ name: 'ecommerce-address' })
     } else {
       const i = cart.value.customer.shippingAddresses.findIndex((a) => a.selected)
@@ -40,12 +40,9 @@ const checkout = async () => {
         else cart.value.customer.shippingAddresses[0].selected = true
         updateLocalStorage()
       }
-
-      // console.log('CCC', i, j, cart.value)
       router.push({ name: 'ecommerce-shipping' })
     }
   } else {
-    // console.log(cart.value)
     router.push({ name: 'ecommerce-secure' })
   }
 }

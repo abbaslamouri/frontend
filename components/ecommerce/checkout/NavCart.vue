@@ -1,23 +1,25 @@
 <script setup>
-const { cart, numberOfItems } = useCart()
+const { numberOfItems } = useCart()
 const { showCartSlideout } = useAppState()
 
-onMounted(() => {
-  cart.value = JSON.parse(localStorage.getItem('cart')) || {}
-})
+// onMounted(() => {
+// cart.value = JSON.parse(localStorage.getItem('cart')) || {}
+// })
 </script>
 
 <template>
   <div class="border border-slate-50 br-3">
-    <button
-      class="btn bnt__secondary px-1 py-05 gap-1"
-      :class="{ btn__checkout: numberOfItems() }"
-      @click="showCartSlideout = true"
-    >
-      <IconsCartFill class="w-2 h-2 fill-slate-50" />
-      <span class="text-xs text-slate-50">Your bag</span>
-      <span class="text-slate-50">({{ numberOfItems() }})</span>
-    </button>
+    <ClientOnly>
+      <button
+        class="btn bnt__secondary px-1 py-05 gap-1"
+        :class="{ btn__checkout: numberOfItems() }"
+        @click="showCartSlideout = true"
+      >
+        <IconsCartFill class="w-2 h-2 fill-slate-50" />
+        <span class="text-xs text-slate-50">Your bag</span>
+        <span class="text-slate-50">({{ numberOfItems() }})</span>
+      </button>
+    </ClientOnly>
   </div>
 </template>
 

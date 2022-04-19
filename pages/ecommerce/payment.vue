@@ -3,8 +3,8 @@ useMeta({ title: 'Payment | YRL' })
 definePageMeta({ layout: 'checkout' })
 
 const { cart, fetchPublishableKey, fetchClientSecret } = useCart()
-// const { fetchPublishableKey, fetchClientSecret } = useHttp()
-
+const { saveDoc } = useHttp()
+const order = ref({})
 const stripe = ref(null)
 const paymentElement = ref(null)
 const elements = ref(null)
@@ -13,13 +13,33 @@ const clientSecret = ref(null)
 const publishableKey = await fetchPublishableKey()
 
 onMounted(async () => {
-  cart.value = JSON.parse(localStorage.getItem('cart')) || {}
+  // cart.value = JSON.parse(localStorage.getItem('cart')) || {}
   console.log(cart.value)
+  order.value.items = []
+  for (const prop in cart.value.items) {
+    order.value.items[prop] = {
+      product: cart.value.items[prop].product,
+      name: cart.value.items[prop].product.name,
+      price: cart.value.items[prop].product.price,
+      salePrice: cart.value.items[prop].product.salePrice,
+      thumb: cart.value.items[prop].product.gallery[0],
+      productType: cart.value.items[prop].product.productType,
+      quantity: cart.value.items[prop].quantity,
+    }
+  }
+  order.value.customer = cart.value.customer
+  order.value.shippingAddress = cart.value.customer.shippingAddresses.find((a) => a.selected == true)
+  order.value.total = cart.value.total
+  order.value.state = 'order'
+  console.log(order.value)
+
+  const response = await saveDoc('orders', order.value)
+  console.log(response)
 
   // cart.value.total = cartTotal()
-  stripe.value = Stripe(publishableKey)
-  clientSecret.value = await fetchClientSecret(cart.value)
-  console.log(clientSecret.value)
+  // stripe.value = Stripe(publishableKey)
+  // clientSecret.value = await fetchClientSecret(cart.value)
+  // console.log(clientSecret.value)
   // const options = {
   //   clientSecret: clientSecret.value,
   //   appearance: {
