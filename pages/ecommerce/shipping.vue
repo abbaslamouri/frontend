@@ -10,8 +10,9 @@ definePageMeta({
 
 const { user, isAuthenticated, updateLoggedInUserData } = useAuth()
 const { cart, updateLocalStorage } = useCart()
-const { fetchAll } = useHttp()
+const { fetchAll, saveDoc } = useHttp()
 const { errorMsg } = useAppState()
+const router = useRouter()
 const showShippingAddressModal = ref(false)
 // const addressToEdit = ref({})
 
@@ -26,11 +27,11 @@ provide('states', states)
 
 const selectedAddress = computed(() => cart.value.customer.shippingAddresses.find((a) => a.selected))
 
-onMounted(async () => {
-  // cart.value = JSON.parse(localStorage.getItem('cart')) || {}
-  // localAddress.value = cloneDeep(selectedAddress.value)
-  console.log(cart.value)
-})
+// onMounted(async () => {
+// cart.value = JSON.parse(localStorage.getItem('cart')) || {}
+// localAddress.value = cloneDeep(selectedAddress.value)
+// console.log(cart.value)
+// })
 
 const saveAddress = () => {
   console.log('ADR', localAddress.value)
@@ -111,6 +112,21 @@ const setSelectedAddress = (index) => {
   updateLocalStorage()
   displayStatus.value = 'displaying'
 }
+
+const updateDbOrder = async () => {
+  const order = await saveDoc('orders', cart.value)
+  console.log('OOOO', order)
+  if (order) {
+    cart.value._id = order._id
+    updateLocalStorage()
+  }
+}
+
+const continueToPayment = () => {
+  cart.value.status = 'shipping'
+  updateDbOrder()
+  router.push({ name: 'ecommerce-payment' })
+}
 </script>
 
 <template>
@@ -124,7 +140,26 @@ const setSelectedAddress = (index) => {
           <div class="bg-stone-400 p-1 text-slate-50">Shipping Address</div>
           <div class="p-2 flex-col gap-1" v-if="displayStatus == 'displaying'">
             <div class="flex-row gap-4 items-center">
-              <EcommerceCheckoutShippingAddress :address="selectedAddress" />
+              <div class="flex-col gap-05 text-xs">
+                <div class="flex-col items-start">
+                  <div class="flex-row gap-05">
+                    <div v-if="selectedAddress && selectedAddress.title">{{ selectedAddress.title }}.</div>
+                    <div>{{ selectedAddress.name }}</div>
+                  </div>
+                  <div>{{ selectedAddress.company }}</div>
+                  <div>{{ selectedAddress.addressLine1 }}</div>
+                  <div>{{ selectedAddress.addressLine2 }}</div>
+                  <div class="flex-row gap-03">
+                    <div>{{ selectedAddress.city }},</div>
+                    <div v-if="selectedAddress.state">
+                      {{ selectedAddress.state.name }}
+                    </div>
+                    <div>{{ selectedAddress.postalCode }}</div>
+                  </div>
+                  <div v-if="selectedAddress.country">{{ selectedAddress.country.countryName }}</div>
+                </div>
+              </div>
+              <!-- <EcommerceCheckoutShippingAddress :address="selectedAddress" /> -->
               <button
                 class="btn btn__secondary px-2 py-05 text-xs"
                 @click.prevent="displayStatus = 'selecting'"
@@ -183,29 +218,22 @@ const setSelectedAddress = (index) => {
               </section>
             </template>
           </Modal>
-          <!-- <EcommerceCheckoutShippingAddresses :customer="cart.customer" @setDefaultAddress="setDefaultAddress" /> -->
-
           <EcommerceCheckoutShippingOptions />
-
           <div class="flex-row items-end justify-between gap-2 bg-stone-300 px-3 py-1 text-sm">
             <NuxtLink class="link btn__link" :to="{ name: 'ecommerce-checkout' }">
               <IconsChevronLeft /><span>Back to Basket</span>
             </NuxtLink>
-            <NuxtLink class="btn btn__checkout px-1 py-05" :to="{ name: 'ecommerce-payment' }">
+            <button class="btn btn__checkout px-2 py-1 items-self-end" @click="continueToPayment">Continue</button>
+            <!-- <NuxtLink class="btn btn__checkout px-1 py-05" :to="{ name: 'ecommerce-payment' }">
               <span> continue</span><IconsChevronRight />
-            </NuxtLink>
+            </NuxtLink> -->
           </div>
         </div>
         <div class="aside bg-slate-50 w-32">
           <EcommerceCheckoutShippingCartOverview />
         </div>
       </div>
-      <div v-else class="flex-1 flex-col gap-2 bg-slate-50 mt-10 p-4 br-3">
-        <p>You have no items in your bag</p>
-        <NuxtLink class="btn btn__checkout px-2 py-05" :to="{ name: 'ecommerce-coffee' }">
-          <span>Start Shopping</span>
-        </NuxtLink>
-      </div>
+      <EcommerceCheckoutEmptyCart v-else class="bg-slate-50 p3" />
     </ClientOnly>
   </div>
 </template>

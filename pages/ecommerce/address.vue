@@ -9,7 +9,7 @@ definePageMeta({
 })
 const { cart, updateLocalStorage } = useCart()
 const { isAuthenticated, updateLoggedInUserData } = useAuth()
-const { fetchAll } = useHttp()
+const { fetchAll, saveDoc } = useHttp()
 const router = useRouter()
 const address = ref({})
 const countries = (await fetchAll('countries', { sort: 'countryName' })).docs
@@ -45,16 +45,25 @@ onMounted(() => {
     }
 })
 
+const updateDbOrder = async () => {
+  const order = await saveDoc('orders', cart.value)
+  console.log('OOOO', order)
+  if (order) {
+    cart.value._id = order._id
+    updateLocalStorage()
+  }
+}
+
 const continueToShipping = async () => {
   cart.value.customer.shippingAddresses[0] = { ...address.value, selected: true, isDefault: true }
-  updateLocalStorage()
-
-  if (isAuthenticated.value) {
-    const response = await updateLoggedInUserData({
-      shippingAddresses: cart.value.customer.shippingAddresses,
-    })
-    console.log('RRRRRR', response)
-  }
+  cart.value.status = 'address'
+  updateDbOrder()
+  // if (isAuthenticated.value) {
+  //   const response = await updateLoggedInUserData({
+  //     shippingAddresses: cart.value.customer.shippingAddresses,
+  //   })
+  //   console.log('RRRRRR', response)
+  // }
   router.push({ name: 'ecommerce-shipping' })
 }
 </script>
@@ -76,14 +85,14 @@ const continueToShipping = async () => {
           </button>
         </div>
       </div>
-      <div v-else class="flex-1 flex-col gap-2 bg-slate-50 mt-10 p-4 br-3">
+      <EcommerceCheckoutEmptyCart v-else class="bg-slate-50 p3" />
+      <!-- <div v-else class="flex-1 flex-col gap-2 bg-slate-50 mt-10 p-4 br-3">
         <p>You have no items in your bag</p>
         <NuxtLink class="btn btn__checkout px-2 py-05" :to="{ name: 'ecommerce-coffee' }">
           <span>Start Shopping</span>
         </NuxtLink>
-      </div>
+      </div> -->
     </ClientOnly>
-    -->
   </div>
 </template>
 

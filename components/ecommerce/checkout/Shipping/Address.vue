@@ -8,7 +8,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="flex-col gap-05 text-xs">
+  <!-- <div class="flex-col gap-05 text-xs">
     <div class="flex-col items-start">
       <div class="flex-row gap-05">
         <div v-if="address && address.title">{{ address.title }}.</div>
@@ -26,7 +26,7 @@ defineProps({
       </div>
       <div v-if="address.country">{{ address.country.countryName }}</div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <style lang="scss" scoped></style>

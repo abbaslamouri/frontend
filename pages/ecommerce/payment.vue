@@ -15,44 +15,42 @@ const publishableKey = await fetchPublishableKey()
 onMounted(async () => {
   // cart.value = JSON.parse(localStorage.getItem('cart')) || {}
   console.log(cart.value)
-  order.value.items = []
-  for (const prop in cart.value.items) {
-    order.value.items[prop] = {
-      product: cart.value.items[prop].product,
-      name: cart.value.items[prop].product.name,
-      price: cart.value.items[prop].product.price,
-      salePrice: cart.value.items[prop].product.salePrice,
-      thumb: cart.value.items[prop].product.gallery[0],
-      productType: cart.value.items[prop].product.productType,
-      quantity: cart.value.items[prop].quantity,
-    }
-  }
-  order.value.customer = cart.value.customer
-  order.value.shippingAddress = cart.value.customer.shippingAddresses.find((a) => a.selected == true)
-  order.value.total = cart.value.total
-  order.value.state = 'order'
-  console.log(order.value)
-
-  const response = await saveDoc('orders', order.value)
-  console.log(response)
-
-  // cart.value.total = cartTotal()
-  // stripe.value = Stripe(publishableKey)
-  // clientSecret.value = await fetchClientSecret(cart.value)
-  // console.log(clientSecret.value)
-  // const options = {
-  //   clientSecret: clientSecret.value,
-  //   appearance: {
-  //     theme: 'flat',
-  //     variables: {
-  //       colorBackground: '#e2e8f0',
-  //     },
-  //     labels: 'floating',
-  //   },
+  // order.value.items = []
+  // for (const prop in cart.value.items) {
+  //   order.value.items[prop] = {
+  //     product: cart.value.items[prop].product,
+  //     name: cart.value.items[prop].product.name,
+  //     price: cart.value.items[prop].product.price,
+  //     salePrice: cart.value.items[prop].product.salePrice,
+  //     thumb: cart.value.items[prop].product.gallery[0],
+  //     productType: cart.value.items[prop].product.productType,
+  //     quantity: cart.value.items[prop].quantity,
+  //   }
   // }
-  // elements.value = stripe.value.elements(options)
-  // paymentElement.value = elements.value.create('payment')
-  // paymentElement.value.mount('#payment-element')
+  // order.value.customer = cart.value.customer
+  // order.value.shippingAddress = cart.value.customer.shippingAddresses.find((a) => a.selected == true)
+  // order.value.total = cart.value.total
+  // order.value.state = 'order'
+  // console.log(order.value)
+  // const response = await saveDoc('orders', order.value)
+  // console.log(response)
+  // cart.value.total = cartTotal()
+  stripe.value = Stripe(publishableKey)
+  clientSecret.value = await fetchClientSecret(cart.value)
+  console.log(clientSecret.value)
+  const options = {
+    clientSecret: clientSecret.value,
+    appearance: {
+      theme: 'flat',
+      variables: {
+        colorBackground: '#e2e8f0',
+      },
+      labels: 'floating',
+    },
+  }
+  elements.value = stripe.value.elements(options)
+  paymentElement.value = elements.value.create('payment')
+  paymentElement.value.mount('#payment-element')
 })
 
 const comfirmPayment = async () => {
@@ -79,7 +77,7 @@ const comfirmPayment = async () => {
     <ClientOnly>
       <div class="gap-2 w-996p flex-row justify-center gap-2" v-if="cart.items && cart.items.length">
         <div class="main flex-1 bg-slate-50 p-2">
-          <form id="payment-form" class="flex-col gap-2">
+          <form id="payment-form" class="flex-col gap-2" @submit.prevent="comfirmPayment">
             <div id="payment-element" class=""></div>
             <button id="submit" class="btn btn__checkout px-2 py-1 items-self-end">
               <div class="spinner hidden" id="spinner"></div>

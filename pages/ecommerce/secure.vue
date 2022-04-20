@@ -58,11 +58,11 @@ const login = async () => {
     isAuthenticated.value = true
     cart.value.customer = data.auth.user
     if (!cart.value.customer.shippingAddresses.length) {
-      cart.value.status = 'cart-address'
+      cart.value.status = 'address'
       updateDbOrder()
       router.push({ name: 'ecommerce-address' })
     } else {
-      cart.value.status = 'cart-shipping'
+      cart.value.status = 'shipping'
       const i = cart.value.customer.shippingAddresses.findIndex((a) => a.selected)
       if (i === -1) {
         const j = cart.value.customer.shippingAddresses.findIndex((a) => a.isDefault)
@@ -146,9 +146,12 @@ const login = async () => {
             <NuxtLink class="btn btn__checkout text-xs px-2 py-1" :to="{ name: 'auth-signup' }">
               <span>Create an Accoun</span>
             </NuxtLink>
+            <!-- <button class="btn btn__link items-self-end px-2 py-1" @click="guestCheckout">
+              Checkout as a guest <IconsChevronRight class="fill-yellow-700" />
+            </button> -->
             <NuxtLink class="link" :to="{ name: 'ecommerce-address' }">
               <span>Checkout as a guest</span>
-              <IconsChevronRight />
+              <IconsChevronRight class="fill-yellow-700" />
             </NuxtLink>
           </div>
         </div>
