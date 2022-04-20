@@ -10,40 +10,52 @@ const router = useRouter()
 const { cart, cartTotal, updateLocalStorage } = useCart()
 const freeSamples = ref([])
 const { isAuthenticated, fetchLoggedInUser } = useAuth()
-const { fetchAll } = useHttp()
+const { fetchAll, saveDoc } = useHttp()
 
 // onMounted(() => {
 // cart.value = JSON.parse(localStorage.getItem('cart')) || {}
 // console.log(cart.value)
 // })
 
+const updateDbOrder = async () => {
+  const order = await saveDoc('orders', cart.value)
+  console.log('OOOO', order)
+  if (order) {
+    cart.value._id = order._id
+    updateLocalStorage()
+  }
+}
+
 const response = await fetchAll('products', { price: '0' })
 if (response) freeSamples.value = response.docs
 
 const checkout = async () => {
-  if (isAuthenticated.value) {
-    const data = await fetchLoggedInUser()
-    if (!data) return
-    const user = data.doc
-    console.log('USER', user)
-    console.log('CUSTOMER', cart.value.customer)
-    cart.value.customer = user
-    updateLocalStorage()
-    if (!cart.value.customer.shippingAddresses.length) {
-      console.log('DDD', cart.value)
-      router.push({ name: 'ecommerce-address' })
-    } else {
-      const i = cart.value.customer.shippingAddresses.findIndex((a) => a.selected)
-      if (i === -1) {
-        const j = cart.value.customer.shippingAddresses.findIndex((a) => a.isDefault)
-        if (j !== -1) cart.value.customer.shippingAddresses[j].selected = true
-        else cart.value.customer.shippingAddresses[0].selected = true
-        updateLocalStorage()
-      }
-      router.push({ name: 'ecommerce-shipping' })
-    }
-  } else {
+  cart.value.status = 'checkout'
+  if (!isAuthenticated.value) {
+    updateDbOrder()
     router.push({ name: 'ecommerce-secure' })
+  } else {
+    const user = await fetchLoggedInUser()
+    console.log(user)
+    if (!user) {
+      updateDbOrder()
+      router.push({ name: 'ecommerce-secure' })
+    } else {
+      cart.value.customer = user
+      if (!cart.value.customer.shippingAddresses.length) {
+        updateDbOrder()
+        router.push({ name: 'ecommerce-address' })
+      } else {
+        const i = cart.value.customer.shippingAddresses.findIndex((a) => a.selected)
+        if (i === -1) {
+          const j = cart.value.customer.shippingAddresses.findIndex((a) => a.isDefault)
+          if (j !== -1) cart.value.customer.shippingAddresses[j].selected = true
+          else cart.value.customer.shippingAddresses[0].selected = true
+          updateDbOrder()
+        }
+        router.push({ name: 'ecommerce-shipping' })
+      }
+    }
   }
 }
 </script>

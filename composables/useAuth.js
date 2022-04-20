@@ -130,7 +130,7 @@ const useAuth = () => {
         if (process.client) errorMsg.value = data.value.message
         return false
       }
-      return data.value
+      return data.value.doc
     } catch (err) {
       console.log('MYERROR', err)
       errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''

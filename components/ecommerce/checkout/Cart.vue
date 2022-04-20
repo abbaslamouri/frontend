@@ -1,26 +1,20 @@
 <script setup>
 const router = useRouter()
-const { cart } = useCart()
+const { cart, updateLocalStorage } = useCart()
 const { showCartSlideout } = useAppState()
 const { saveDoc } = useHttp()
 
-// onMounted(() => {
-// cart.value = JSON.parse(localStorage.getItem('cart')) || { items: [] }
-// console.log(cart.value)
-// })
-
 const checkout = async () => {
-  console.log('PPPPPP', cart.value)
-  // showCartSlideout.value = false÷
-  const response = await saveDoc('orders', cart.value)
-  console.log(response)
-  // router.push({ name: 'ecommerce-checkout' })
+  showCartSlideout.value = false
+  cart.value.status = 'cart'
+  const order = await saveDoc('orders', cart.value)
+  console.log(order)
+  if (order) {
+    cart.value._id = order._id
+    updateLocalStorage()
+    router.push({ name: 'ecommerce-checkout' })
+  }
 }
-
-// const startShoppingt = async () => {
-//   showCartSlideout.value = false
-//   router.push({ name: 'ecommerce-coffee' })
-// }
 </script>
 
 <template>

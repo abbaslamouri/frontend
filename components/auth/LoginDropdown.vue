@@ -26,8 +26,8 @@ const login = async () => {
     path: '/',
   })
   auth.value = data.auth
-  user.value = data.user
-  token.value = data.token
+  user.value = data.auth.user
+  token.value = data.auth.token
   isAuthenticated.value = true
   message.value = 'Login successful'
 

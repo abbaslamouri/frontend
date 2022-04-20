@@ -78,7 +78,7 @@ const useHttp = () => {
         : null
     try {
       if (payload._id) {
-        response = await useFetch(`${config.API_URL}/${resource}/${payload.id}`, {
+        response = await useFetch(`${config.API_URL}/${resource}/${payload._id}`, {
           method: 'PATCH',
           body: payload,
           headers: { Authorization: `Bearer ${token}` },
@@ -90,7 +90,6 @@ const useHttp = () => {
           headers: { Authorization: `Bearer ${token}` },
         })
       }
-      // console.log(response.data.value)
       if (response.error.value) throw response.error.value
       if (response.data.value.status === 'fail') {
         console.log('DATAT', response.data.value.message)
