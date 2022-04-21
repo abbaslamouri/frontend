@@ -19,7 +19,7 @@ const { fetchAll, saveDoc } = useHttp()
 
 const updateDbOrder = async () => {
   const order = await saveDoc('orders', cart.value)
-  console.log('OOOO', order)
+  // console.log('OOOO', order)
   if (order) {
     cart.value._id = order._id
     updateLocalStorage()

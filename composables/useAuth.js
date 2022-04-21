@@ -17,23 +17,21 @@ const useAuth = () => {
     errorMsg.value = ''
     message.value = ''
     try {
-      const { data, pending, error } = await useFetch(`${config.API_URL}/auth/signup`, { method: 'POST', body: user })
+      const { data, pending, error } = await useFetch(`${config.API_URL}/auth/signup`, {
+        method: 'POST',
+        body: {
+          user,
+          completeSingupUrl: `${config.BASE_URL}/auth/completesignup`,
+          emailSubject: 'Welcome on board !',
+        },
+      })
       console.log('DATA', data.value)
       if (error.value) throw error.value
       if (data.value && data.value.status === 'fail') {
         if (process.client) errorMsg.value = data.value.message
         return false
       }
-      const response = await $fetch('/api/v1/email', {
-        method: 'POST',
-        body: {
-          user,
-          url: `${config.BASE_URL}/auth/completesignup/?token=${data.value.resetToken}`,
-          action: 'signup',
-        },
-      })
-      console.log('RES', response)
-      return response
+      return data.value
     } catch (err) {
       if (process.client) {
         console.log('MYERROR', err)
@@ -102,7 +100,7 @@ const useAuth = () => {
         return false
       }
       console.log('FETCH Loggedin', data.value)
-      return data.value
+      return data.value.doc
     } catch (err) {
       if (process.client) {
         console.log('MYERROR', err)

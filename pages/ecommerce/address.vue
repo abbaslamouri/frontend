@@ -25,7 +25,7 @@ onMounted(() => {
     address.value = cloneDeep(cart.value.customer.shippingAddresses[0])
   else
     address.value = {
-      email: 'abbaslamnouri@yrlus.com',
+      email: 'abbaslamouri@yrlus.com',
       title: 'Mr',
       name: 'Abbas Lamouri',
       company: 'YRL Consulting LLC',
