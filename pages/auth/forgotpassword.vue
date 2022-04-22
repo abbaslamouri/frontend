@@ -1,30 +1,21 @@
 <script setup>
 const { forgotPassword } = useAuth()
-const { message, errorMsg } = useFactory()
+const { message, errorMsg } = useAppState()
 
-const email = ref('lamouri@genvac.com')
+const email = ref('abbaslamouri@yrlus.com')
 
 const handleForgotPassword = async () => {
   errorMsg.value = null
   message.value = null
   const response = await forgotPassword(email.value)
-  console.log(response)
-  if (response.ok !== false) return (message.value = 'Please check your email for instructions to reset your password.')
-  errorMsg.value = response.errorMsg
-
-  // appMessage.snackbar.show = false
-  // await auth.forgotPassword({ email: email.value })
-  // if (auth.message) {
-  // appMessage.setSnackbar(true, auth.message, 'Success')
-  router.push({ name: 'index' })
-  // }
-  // if (auth.errorMsg) appMessage.setSnackbar(true, auth.errorMsg, 'Error')
+  if (response) return (message.value = 'Please check your email for instructions to reset your password.')
+  
 }
 </script>
 
 <template>
-  <div class="h100vh bg-slate-900 flex-row justify-center items-start pt10">
-    <form class="bg-slate-50 p4 br3 flex-col gap2" @submit.prevent="handleForgotPassword">
+  <div class="h-100vh bg-slate-900 flex-row justify-center items-start pt-10">
+    <form class="bg-slate-50 p-4 br-3 flex-col gap-2" @submit.prevent="handleForgotPassword">
       <h2>Forgot you password?</h2>
       <FormsBaseInput
         type="email"
@@ -41,7 +32,7 @@ const handleForgotPassword = async () => {
       </p>
       <p class="text-sm">If you have questions, please call customer service at 1-800-555-5555.</p>
 
-      <button class="btn btn__primary py05 px1 items-self-end">Reset Password<IconsChevronRight /></button>
+      <button class="btn btn__primary py-05 px-1 items-self-end">Reset Password<IconsChevronRight /></button>
     </form>
   </div>
 </template>

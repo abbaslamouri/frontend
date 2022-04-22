@@ -2,41 +2,21 @@
 useMeta({ title: 'Payment | YRL' })
 definePageMeta({ layout: 'checkout' })
 
+const router = useRouter(0)
 const { cart, fetchPublishableKey, fetchClientSecret } = useCart()
-const { saveDoc } = useHttp()
-const order = ref({})
 const stripe = ref(null)
 const paymentElement = ref(null)
 const elements = ref(null)
 const clientSecret = ref(null)
-
+const errorMessage = ref('')
+const submitting = ref(false)
 const publishableKey = await fetchPublishableKey()
 
 onMounted(async () => {
-  // cart.value = JSON.parse(localStorage.getItem('cart')) || {}
   console.log(cart.value)
-  // order.value.items = []
-  // for (const prop in cart.value.items) {
-  //   order.value.items[prop] = {
-  //     product: cart.value.items[prop].product,
-  //     name: cart.value.items[prop].product.name,
-  //     price: cart.value.items[prop].product.price,
-  //     salePrice: cart.value.items[prop].product.salePrice,
-  //     thumb: cart.value.items[prop].product.gallery[0],
-  //     productType: cart.value.items[prop].product.productType,
-  //     quantity: cart.value.items[prop].quantity,
-  //   }
-  // }
-  // order.value.customer = cart.value.customer
-  // order.value.shippingAddress = cart.value.customer.shippingAddresses.find((a) => a.selected == true)
-  // order.value.total = cart.value.total
-  // order.value.state = 'order'
-  // console.log(order.value)
-  // const response = await saveDoc('orders', order.value)
-  // console.log(response)
-  // cart.value.total = cartTotal()
-  stripe.value = Stripe(publishableKey)
-  clientSecret.value = await fetchClientSecret(cart.value)
+  if (!cart.value.total || !cart.value.items.length) return router.push({ name: 'ecommerce-checkout' })
+  stripe.value = await Stripe(publishableKey)
+  clientSecret.value = await fetchClientSecret(cart.value.id)
   console.log(clientSecret.value)
   const options = {
     clientSecret: clientSecret.value,
@@ -54,17 +34,30 @@ onMounted(async () => {
 })
 
 const comfirmPayment = async () => {
+  submitting.value = true
   try {
     const result = await stripe.value.confirmPayment({
       elements: elements.value,
       confirmParams: {
-        return_url: 'http://localhost:4000/ecommerce/thankyou',
+        return_url: `http://localhost:4000/ecommerce/thankyou/?orderId=${cart.value.id}`,
       },
     })
     console.log(result)
     if (result.error) console.log(result.error.message)
+    switch (result.error.code) {
+      case 'card_declined':
+        errorMessage.value = `${result.error.message}  Please try a different card.`
+        break
+
+      default:
+        errorMessage.value = `Your card was declined.  Please try a different card.`
+        break
+    }
+    submitting.value = false
   } catch (err) {
     console.log(err.message)
+    errorMessage.value = result.error.message
+    submitting.value = false
   }
 }
 </script>
@@ -78,24 +71,24 @@ const comfirmPayment = async () => {
       <div class="gap-2 w-996p flex-row justify-center gap-2" v-if="cart.items && cart.items.length">
         <div class="main flex-1 bg-slate-50 p-2">
           <form id="payment-form" class="flex-col gap-2" @submit.prevent="comfirmPayment">
+            <div>
+              <input type="text" :value="cart.customer.shippingAddresses.find((a) => a.selected === true).name" />
+              <input type="text" :value="cart.customer.shippingAddresses.find((a) => a.selected === true).email" />
+            </div>
             <div id="payment-element" class=""></div>
             <button id="submit" class="btn btn__checkout px-2 py-1 items-self-end">
-              <div class="spinner hidden" id="spinner"></div>
-              <span id="button-text">Pay now</span>
+              <!-- <div class="spinner" id="spinner" v-if="submitting"></div> -->
+              <Spinner width="2rem" height="2rem" v-if="submitting" />
+              <span id="button-text" v-else>Pay now</span>
             </button>
-            <div id="payment-message" class="hidden"></div>
+            <div id="payment-message" class="bg-red-100 p-2" v-if="errorMessage">{{ errorMessage }}</div>
           </form>
         </div>
         <div class="aside bg-slate-50 w-32">
           <EcommerceCheckoutShippingCartOverview />
         </div>
       </div>
-      <div v-else class="flex-1 flex-col gap-2 bg-slate-50 mt-10 p-4 br-3">
-        <p>You have no items in your bag</p>
-        <NuxtLink class="btn btn__checkout px-2 py-05" :to="{ name: 'ecommerce-products' }">
-          <span>Start Shopping</span>
-        </NuxtLink>
-      </div>
+      <EcommerceCheckoutEmptyCart v-else class="bg-slate-50 p3" />
     </ClientOnly>
   </div>
 </template>

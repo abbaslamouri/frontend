@@ -2,7 +2,7 @@
 const route = useRoute()
 
 const heroBgImage = computed(() =>
-  route.name === 'ecommerce-products' ? '/assets/hero-original.webp' : '/assets/hero-virtuo.webp'
+  route.name === 'ecommerce-coffee' ? '/assets/hero-original.webp' : '/assets/hero-virtuo.webp'
 )
 </script>
 

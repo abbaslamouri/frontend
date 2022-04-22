@@ -26,7 +26,7 @@ const completeSignup = async () => {
   user.value = data.user
   token.value = data.token
   isAuthenticated.value = true
-  router.push({ name: 'ecommerce-coffee' })
+  // router.push({ name: 'ecommerce-coffee' })
   message.value = 'Registration successfull.  You are now logged in.'
 }
 

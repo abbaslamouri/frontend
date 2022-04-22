@@ -49,7 +49,7 @@ const updateDbOrder = async () => {
   const order = await saveDoc('orders', cart.value)
   console.log('OOOO', order)
   if (order) {
-    cart.value._id = order._id
+    cart.value.id = order._id
     updateLocalStorage()
   }
 }
@@ -58,12 +58,12 @@ const continueToShipping = async () => {
   cart.value.customer.shippingAddresses[0] = { ...address.value, selected: true, isDefault: true }
   cart.value.status = 'address'
   updateDbOrder()
-  // if (isAuthenticated.value) {
-  //   const response = await updateLoggedInUserData({
-  //     shippingAddresses: cart.value.customer.shippingAddresses,
-  //   })
-  //   console.log('RRRRRR', response)
-  // }
+  if (isAuthenticated.value) {
+    const response = await updateLoggedInUserData({
+      shippingAddresses: cart.value.customer.shippingAddresses,
+    })
+    console.log('RRRRRR', response)
+  }
   router.push({ name: 'ecommerce-shipping' })
 }
 </script>

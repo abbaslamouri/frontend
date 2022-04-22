@@ -56,7 +56,7 @@ const login = async () => {
 }
 
 const forgotPassword = async () => {
-  router.push({ name: 'auth-forgot-password' })
+  router.push({ name: 'auth-forgotpassword' })
   showAuthDropdown.value = false
 }
 </script>

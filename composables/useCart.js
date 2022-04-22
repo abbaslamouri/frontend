@@ -105,13 +105,13 @@ const useCart = () => {
     }
   }
 
-  const fetchClientSecret = async (payload) => {
+  const fetchClientSecret = async (orderId) => {
     errorMsg.value = ''
     message.value = ''
     try {
       const { data, pending, error } = await useFetch(`${config.API_URL}/orders/secret`, {
         method: 'POST',
-        body: payload,
+        body: { orderId },
       })
       if (error.value) throw error.value
       if (data.value && data.value.status === 'fail') {

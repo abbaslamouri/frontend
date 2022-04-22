@@ -117,7 +117,7 @@ const updateDbOrder = async () => {
   const order = await saveDoc('orders', cart.value)
   console.log('OOOO', order)
   if (order) {
-    cart.value._id = order._id
+    cart.value.id = order._id
     updateLocalStorage()
   }
 }
@@ -140,9 +140,9 @@ const continueToPayment = () => {
           <div class="bg-stone-400 p-1 text-slate-50">Shipping Address</div>
           <div class="p-2 flex-col gap-1" v-if="displayStatus == 'displaying'">
             <div class="flex-row gap-4 items-center">
-              <div class="flex-col gap-05 text-xs">
-                <div class="flex-col items-start">
-                  <div class="flex-row gap-05">
+              <!-- <div class="flex-col gap-05 text-xs"> -->
+              <!-- <div class="flex-col items-start"> -->
+              <!-- <div class="flex-row gap-05">
                     <div v-if="selectedAddress && selectedAddress.title">{{ selectedAddress.title }}.</div>
                     <div>{{ selectedAddress.name }}</div>
                   </div>
@@ -156,10 +156,10 @@ const continueToPayment = () => {
                     </div>
                     <div>{{ selectedAddress.postalCode }}</div>
                   </div>
-                  <div v-if="selectedAddress.country">{{ selectedAddress.country.countryName }}</div>
-                </div>
-              </div>
-              <!-- <EcommerceCheckoutShippingAddress :address="selectedAddress" /> -->
+                  <div v-if="selectedAddress.country">{{ selectedAddress.country.countryName }}</div> -->
+              <!-- </div> -->
+              <!-- </div> -->
+              <EcommerceCheckoutShippingAddress :address="selectedAddress" />
               <button
                 class="btn btn__secondary px-2 py-05 text-xs"
                 @click.prevent="displayStatus = 'selecting'"

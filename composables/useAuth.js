@@ -136,6 +136,61 @@ const useAuth = () => {
     }
   }
 
+  const forgotPassword = async (email) => {
+    errorMsg.value = ''
+    message.value = ''
+    try {
+      const { data, pending, error } = await useFetch(`${config.API_URL}/auth/forgotpassword`, {
+        method: 'POST',
+        body: {
+          email,
+          passwordResetUrl: `${config.BASE_URL}/auth/resetpassword`,
+          emailSubject: 'Your password reset token (valid for 1 hour)',
+        },
+      })
+      console.log('DATA', data.value)
+      if (error.value) throw error.value
+      if (data.value && data.value.status === 'fail') {
+        if (process.client) errorMsg.value = data.value.message
+        return false
+      }
+      return data.value
+    } catch (err) {
+      if (process.client) {
+        console.log('MYERROR', err)
+        errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+        return false
+      }
+    }
+  }
+
+  const resetPassword = async (payload) => {
+    errorMsg.value = ''
+    message.value = ''
+    console.log(payload)
+    try {
+      const { data, pending, error } = await useFetch(`${config.API_URL}/auth/resetpassword/${payload.token}`, {
+        method: 'PATCH',
+        body: {
+          password: payload.password,
+        },
+      })
+      console.log('DATA', data.value)
+      if (error.value) throw error.value
+      if (data.value && data.value.status === 'fail') {
+        if (process.client) errorMsg.value = data.value.message
+        return false
+      }
+      return data.value
+    } catch (err) {
+      if (process.client) {
+        console.log('MYERROR', err)
+        errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+        return false
+      }
+    }
+  }
+
   // const login = async (user) => {
   //   console.log('here')
   //   try {
@@ -192,6 +247,8 @@ const useAuth = () => {
     signin,
     fetchLoggedInUser,
     updateLoggedInUserData,
+    forgotPassword,
+    resetPassword,
   }
 }
 
